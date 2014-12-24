@@ -5,7 +5,7 @@ Sample program to demonstrate the robust features provided by Purify.
 
  - Install [Github Windows](https://windows.github.com/) client. **Required.**
  - Install [CMake](http://www.cmake.org/) and Choose "add CMake to system PATH". **Optional.** This will accelerate build generation as CMake no longer needs to be downloaded at build time.
- - Clone to desktop.
+ - Clone to desktop or download ZIP.
  - Double click to execute "zGenerateSolution.bat".
  - Run and build!
  
