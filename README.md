@@ -4,7 +4,7 @@ Purify Sample Project - Visual Studio
 Sample program to demonstrate the robust features provided by Purify.
 
  - Install [Github Windows](https://windows.github.com/) client. **Required.**
- - Install [CMake](http://www.cmake.org/) and Choose "add CMake to system PATH". **Optional.**
+ - Install [CMake](http://www.cmake.org/) and Choose "add CMake to system PATH". **Optional.** This will accelerate build generation for CMake no longer needs to be downloaded on build.
  - Clone to desktop.
  - Execute "zGenerateSolution.bat".
  - Run and build!
