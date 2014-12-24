@@ -10,7 +10,7 @@ Sample program to demonstrate the robust features provided by Purify.
 
 Purify is particularly suited for C++ development with [Visual Studio](http://www.visualstudio.com/) and [XCode](https://developer.apple.com/xcode/) while being mostly compatible with any other build environments supported by CMake.
 
-Purify is a work in progress. If you are not familiar with CMake, it is strongly advisable to use Purify only with Visual Studio.
+**Purify is a work in progress.** If you are not familiar with CMake, it is strongly advisable to use Purify only with Visual Studio.
 
 License
 -------
