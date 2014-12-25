@@ -7,10 +7,9 @@ Purify is particularly suited for C++ development with [Visual Studio](http://ww
 
 Purify is a work in progress. If you are not familiar with CMake, it is strongly advisable to use Purify only with Visual Studio.
 
-Build Your Own Program
-----------------------
-
-
+Sameple Program
+---------------
+https://github.com/piaoasd123/PurifySampleProject
 
 Credits
 -------
