@@ -10,5 +10,5 @@ LocalObject::LocalObject()
 
 void LocalObject::SayHi()
 {
-	printf("Hello! I am a local object!\n");
+	printf("Hello! I am from SampleProgram!\n");
 }

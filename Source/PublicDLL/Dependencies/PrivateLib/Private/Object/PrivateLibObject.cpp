@@ -12,6 +12,6 @@ namespace PrivateLib
 
 	void PrivateLibObject::SayHi()
 	{
-		printf("Hello! I am a static library object!\n");
+		printf("Hello! I am from PrivateLib!\n");
 	}
 }

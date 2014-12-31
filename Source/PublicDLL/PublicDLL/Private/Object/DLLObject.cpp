@@ -19,6 +19,6 @@ namespace PublicDLL
 
 	EXAMPLEAPI void DLLObject::SayHi()
 	{
-		printf("Hello! I am a dynamic library object!\n");
+		printf("Hello! I am from PublicDLL!\n");
 	}
 }
