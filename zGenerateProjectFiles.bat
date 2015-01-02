@@ -23,17 +23,19 @@ rem ## Find Purify or clone from Git
 IF NOT EXIST %~dp0\Purify (
 		echo Purify is cloning itself from GitHub...
 		echo.
-		%Git% clone https://github.com/piaoasd123/Purify.git
+		"%Git%" clone https://github.com/piaoasd123/Purify.git
 		echo.
 ) else (
 		echo Purify is updating...
+		echo.
 		pushd %~dp0\Purify\
-		1>NUL 2>NUL %Git% pull https://github.com/piaoasd123/Purify.git
+		1>NUL "%Git%" pull https://github.com/piaoasd123/Purify.git
 		popd
+		echo.
 )
 
 rem ## Find Visual Studio 2013 Full & Express
-:FindVS2013
+:FindVS2015
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 14
 popd
@@ -67,7 +69,7 @@ call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
 echo Purify is setting up project files...
 2>NUL mkdir Build
 pushd %~dp0\Build
-1>NUL 2>NUL %CMakePath% -G %CMakeArg% %~dp0
+1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
 popd
 
 rem ## Generate Solution icon
