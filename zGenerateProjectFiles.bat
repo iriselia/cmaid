@@ -13,6 +13,8 @@ if not defined CMakePath (
 	IF NOT EXIST %~dp0\CMake\bin\cmake.exe (
 		echo Purify is cloning a portable CMake from GitHub...
 		echo.
+		mkdir CMake
+		Attrib +h +s +r CMake
 		%Git% clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
 		echo.
 	)
@@ -21,6 +23,8 @@ if not defined CMakePath (
 
 rem ## Find Purify or clone from Git
 IF NOT EXIST %~dp0\Purify (
+		mkdir Purify
+		Attrib +h +s +r Purify
 		echo Purify is cloning itself from GitHub...
 		echo.
 		"%Git%" clone https://github.com/piaoasd123/Purify.git
@@ -67,12 +71,29 @@ goto ReadyToBuild
 call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
 :ReadyToBuild
 echo Purify is setting up project files...
+if NOT EXIST %~dp0\Build (
+	goto InitialBuild
+) else (
+	goto Rebuild
+)
+
+:InitialBuild
 2>NUL mkdir Build
+Attrib +h +s +r Build
+pushd %~dp0\Build
+rem ## build twice here because first build generates cache
+1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
+1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
+popd
+goto GenerateSolutionIcon
+
+:Rebuild
 pushd %~dp0\Build
 1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
 popd
+goto GenerateSolutionIcon
 
-rem ## Generate Solution icon
+:GenerateSolutionIcon
 for %%* in (.) do set CurrDirName=%%~n*
 for /f "delims=" %%A in ('cd') do (set foldername=%%~nxA)
 

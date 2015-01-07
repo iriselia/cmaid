@@ -1,4 +1,5 @@
-SET( DEFINE )
+SET( DEFINE
+	)
 SET( INCLUDE
 	PrivateLib
 	)
