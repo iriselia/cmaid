@@ -1,11 +1,11 @@
 SET( DEFINE
-	EXAMPLE_MACRO
-	)
+EXAMPLE_MACRO
+)
 SET( INCLUDE
-	PublicDLL
-	)
+PublicDLL
+)
 SET( LINK
-	PublicDLL
-	)
+PublicDLL
+)
 
 create_project(CONSOLE "${DEFINE}" "${INCLUDE}" "${LINK}")
