@@ -4,4 +4,4 @@ or indirectly include PrivateLib. Both SampleProgram and PublicDLL have
 access to this header
 */
 // Enable this to fix the build.
-//#include "Public/Object/PrivateLibObject.h"
+#include "Public/Object/PrivateLibObject.h"
