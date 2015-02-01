@@ -56,9 +56,30 @@ MACRO(create_build global_define )
 				list (APPEND CURRENT_INCLUDE_DIRS ${_dir})
 			endforeach()
 			list(REMOVE_DUPLICATES CURRENT_INCLUDE_DIRS)
+			list (APPEND CURRENT_INCLUDE_DIRS ${fileDir}/../)
 			#include current include dirs and cache the content
 			unset(${PROJECT_NAME}_ALL_INCLUDE_DIRS CACHE)
 			set(${PROJECT_NAME}_ALL_INCLUDE_DIRS "${CURRENT_INCLUDE_DIRS}" CACHE STRING "")
+		endif()
+		
+		#----- Private pre-compiled Header -----
+		file(GLOB_RECURSE MY_HEADERS ${fileDir}/*.pch.h)
+		if( NOT MY_HEADERS STREQUAL "" )
+			create_source_group("" "${fileDir}/" ${MY_HEADERS})
+			#remove duplicates and parse directories
+			set(CURRENT_INCLUDE_DIRS "")
+			set(_headerFile "")
+			foreach (_headerFile ${MY_HEADERS})
+				get_filename_component(_dir ${_headerFile} PATH)
+				FILE(RELATIVE_PATH newdir ${CMAKE_CURRENT_BINARY_DIR} ${_dir})
+				list (APPEND CURRENT_INCLUDE_DIRS ${_dir})
+			endforeach()
+			list(REMOVE_DUPLICATES CURRENT_INCLUDE_DIRS)
+			#include current include dirs and cache the content
+			unset(${PROJECT_NAME}_PRECOMPILED_INCLUDE_DIRS CACHE)
+			set(${PROJECT_NAME}_PRECOMPILED_INCLUDE_DIRS "${CURRENT_INCLUDE_DIRS}" CACHE STRING "")
+			unset(${PROJECT_NAME}_PRECOMPILED_INCLUDE_FILES CACHE)
+			set(${PROJECT_NAME}_PRECOMPILED_INCLUDE_FILES "${MY_HEADERS}" CACHE STRING "")
 		endif()
 		
 		#----- Private Headers -----
