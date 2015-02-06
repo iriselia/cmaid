@@ -1,7 +1,7 @@
 MACRO( CreateVSProjectSettings )
 	# ONLY for msvc
 	if(MSVC)
-		/FC #Full Path of Source Code File in Diagnostics
+		#/FC #Full Path of Source Code File in Diagnostics
 	
 		# Find user and system name
 		SET(SYSTEM_NAME $ENV{USERDOMAIN} CACHE STRING SystemName)
