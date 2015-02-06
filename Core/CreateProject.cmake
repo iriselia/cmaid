@@ -335,8 +335,8 @@ MACRO(create_project mode defines includes links)
 				string(REPLACE "/" "\\" arg2 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../")
 				add_custom_command(TARGET ${PROJECT_NAME}
 				   POST_BUILD
-				   COMMAND "cp"
-				   ARGS "${arg1}" "${arg2}"
+				   COMMAND "tar"
+				   ARGS  "-cf" "-" "${arg1}" "|" "tar" "-C${arg2}" "-xf" "-"
 				   COMMENT "Copying resource files to the binary output directory...")
 			endif()
 			##message("FIX COPY")
