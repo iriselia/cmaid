@@ -29,6 +29,9 @@ if [ "$(uname)" = "Darwin" ]; then
 
 	if [ -d "$purify" ]; then
 		echo "found purify"
+		cd Purify
+		git pull "https://github.com/piaoasd123/Purify.git"
+		cd ..
 	else
 		echo $purify "purify not found"
 		mkdir Purify
@@ -36,8 +39,18 @@ if [ "$(uname)" = "Darwin" ]; then
 		git clone "https://github.com/piaoasd123/Purify.git"
 	fi
 
-	
-	
+	cmakeListsDir="$(pwd)"
+	if [ -d "./Build" ]; then
+		echo "found build"
+	else
+		echo "building..."
+		mkdir Build
+		#chflags hidden Build
+	fi
+	cd $(pwd)/Build
+	"$cmake" -G Xcode "$cmakeListsDir"
+	"$cmake" -G Xcode "$cmakeListsDir"
+	cd ..
 #	cd Engine/Build/BatchFiles/Mac
 #	sh ./GenerateLLDBInit.sh
 #	sh ./GenerateProjectFiles.sh $@

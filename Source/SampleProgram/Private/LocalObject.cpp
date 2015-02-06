@@ -1,3 +1,8 @@
+#if defined(__APPLE__)
+#include <SampleProgram.generated.pch.h>
+#include <SampleProgram.pri.h>
+#endif
+
 LocalObject::~LocalObject()
 {
 

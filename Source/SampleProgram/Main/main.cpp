@@ -1,3 +1,7 @@
+#if defined(__APPLE__)
+#include <SampleProgram.generated.pch.h>
+#include <SampleProgram.pri.h>
+#endif
 
 // Example 0: EXAMPLE_MACRO is defined in the CMakeLists.txt of SampleProgram
 #ifdef EXAMPLE_MACRO
