@@ -10,7 +10,9 @@ MACRO(force_include_protected compileFlags includeProjs outString)
 				FOREACH(proFile ${${includeProj}_PROTECTED_INCLUDE_FILES})
 					FILE(RELATIVE_PATH folder ${${includeProj}_SOURCE_DIR_CACHED} ${proFile})
 					string(CONCAT ${outString} ${${outString}} "\#include \"${folder}\"\n")
-					string(CONCAT ${compileFlags} ${${compileFlags}} " " "/FI\"${folder}\"")
+					if(MSVC)
+						string(CONCAT ${compileFlags} ${${compileFlags}} " " "/FI\"${folder}\"")
+					endif()
 				ENDFOREACH()
 			else()
 				string(CONCAT ${outString} ${${outString}} "/* Not found */\n")
@@ -32,7 +34,9 @@ MACRO(force_include_public_recursive compileFlags includeProj outString)
 		foreach(pubFile ${${includeProj}_PUBLIC_INCLUDE_FILES})
 			FILE(RELATIVE_PATH folder ${${includeProj}_SOURCE_DIR_CACHED} ${pubFile})
 			string(CONCAT ${outString} ${${outString}} "\#include \"${folder}\"\n")
-			string(CONCAT ${compileFlags} ${${compileFlags}} " " "/FI\"${folder}\"")
+			if(MSVC)
+				string(CONCAT ${compileFlags} ${${compileFlags}} " " "/FI\"${folder}\"")
+			endif()
 		endforeach()
 	else()
 		string(CONCAT ${outString} ${${outString}} "/* Not found */\n")
@@ -236,17 +240,19 @@ MACRO(create_project mode defines includes links)
 			list(APPEND MY_HEADERS ${generatedHeader})
 			list(APPEND ${PROJECT_NAME}_SRC ${generatedSource})
 
-		SET_SOURCE_FILES_PROPERTIES(${${PROJECT_NAME}_SRC}
-			PROPERTIES COMPILE_FLAGS
-			"/Yu\"${usePrecompiled}\"
-			/FI\"${forceInclude}\"
-			/FI\"${${PROJECT_NAME}_PRIVATE_INCLUDE_FILES}\"
-			/Fp\"${precompiledOutputBinary}\""
-										   OBJECT_DEPENDS "${precompiledOutputBinary}")
-		
-		SET_SOURCE_FILES_PROPERTIES(${generatedSource}
-			PROPERTIES COMPILE_FLAGS "/Yc\"${generatedHeaderName}\" /Fp\"${generatedBinary}\""
-			OBJECT_OUTPUTS "${generatedBinary}")
+			if(MSVC)
+				SET_SOURCE_FILES_PROPERTIES(${${PROJECT_NAME}_SRC}
+					PROPERTIES COMPILE_FLAGS
+					"/Yu\"${usePrecompiled}\"
+					/FI\"${forceInclude}\"
+					/FI\"${${PROJECT_NAME}_PRIVATE_INCLUDE_FILES}\"
+					/Fp\"${precompiledOutputBinary}\""
+												   OBJECT_DEPENDS "${precompiledOutputBinary}")
+				
+				SET_SOURCE_FILES_PROPERTIES(${generatedSource}
+					PROPERTIES COMPILE_FLAGS "/Yc\"${generatedHeaderName}\" /Fp\"${generatedBinary}\""
+					OBJECT_OUTPUTS "${generatedBinary}")
+			endif()
 		else( NOT ${PRECOMPILED_HEADER} STREQUAL "")
 			file(WRITE "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pub.h" )
 		endif()
