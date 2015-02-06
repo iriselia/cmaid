@@ -1,3 +1,8 @@
+#if defined(__APPLE__)
+#include <PublicDLL.generated.pch.h>
+#include <PublicDLL.pri.h>
+#endif
+
 namespace PublicDLL
 {
 	EXAMPLEAPI DLLObject::~DLLObject()
