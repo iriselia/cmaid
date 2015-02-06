@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------#  |
 cmake_minimum_required( VERSION 3.0 )
 # Set module path
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../Purify")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Purify")
 # Include purify build scripts
 include( Purify )
 # ------------------------------------------------------------------#--|
@@ -16,7 +16,6 @@ include( Purify )
 # Add global compile/link flags and preprocessor definitions
 SET( GLOBAL_DEFINE
 _CRT_SECURE_NO_WARNINGS
-/FC #Full Path of Source Code File in Diagnostics
 )
 
 # Enable Unicode
