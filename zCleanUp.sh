@@ -2,6 +2,7 @@
 cd "`dirname "$0"`"
 
 rm -rf *.sln
+rm -rf *.xcodeproj
 rm -rf *.lnk
 
 #for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
