@@ -7,7 +7,6 @@ Sample program to demonstrate the robust features provided by [Purify](https://g
  - Clone PurifySampleProject to desktop or download ZIP.
  - Double click to execute "zGenerateProjectFiles.bat".
  - Build and run!
-
  - Optionally, you can install [CMake](http://www.cmake.org/) and "Add CMake to System PATH". This will accelerate build generation as CMake no longer needs to be downloaded from an externally repository.
 
 
