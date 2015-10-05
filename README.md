@@ -1,4 +1,4 @@
-Purify Sample Project - Visual Studio
+Purify Sample Project - Windows & Mac OS X
 =====
 
 Sample program to demonstrate the robust features provided by [Purify](https://github.com/piaoasd123/Purify).
