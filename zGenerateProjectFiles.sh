@@ -34,12 +34,10 @@ fi
 # if MacOS
 if [ "$(uname)" = "Darwin" ]; then
 	CMake="/Applications/CMake.app/Contents/bin/cmak1e"
-	PortableCMake="${BASEDIR}/CMake/bin/cmake"
+	PortableCMake="$(pwd)/CMake/bin/cmake"
 	GitHub="/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
 	GitHubUser="/Users/$username/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
 	isGitHubAvailable=false
-
-	echo "$PortableCMake"
 
 	if [ -f "$GitHub" ]; then
 		isGitHubAvailable=true
@@ -55,9 +53,9 @@ if [ "$(uname)" = "Darwin" ]; then
 		printf "\e[0;32mFound CMake \e[0m \n"
 	elif [ -f "$PortableCMake" ]; then
 		CMake="$PortableCMake"
-		printf "\e[0;32mFound Portable CMake. \e[0m \n"
+		printf "\e[0;32mFound Portable CMake.\e[0m \n"
 	else
-		if [ "${isGitHubAvailable}" = true && "${isNetworkAvailable}" = true ]; then
+		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;33mWarning: Could not find CMake, start downloading CMake. \e[0m \n"
 			mkdir CMake
 			chflags hidden CMake
@@ -78,7 +76,7 @@ if [ "$(uname)" = "Darwin" ]; then
 	purify="$(pwd)/Purify"
 
 	if [ -d "$purify" ]; then
-		if [ "${isGitHubAvailable}" = true && "${isNetworkAvailable}" = true ]; then
+		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
 			cd Purify
 			git pull "https://github.com/piaoasd123/Purify.git"
@@ -88,7 +86,7 @@ if [ "$(uname)" = "Darwin" ]; then
 	
 		fi
 	else
-		if [ "${isGitHubAvailable}" = true && "${isNetworkAvailable}" = true ]; then
+		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
 			mkdir Purify
 			chflags hidden Purify
@@ -109,14 +107,14 @@ if [ "$(uname)" = "Darwin" ]; then
 	#ln -s "$cmakeListsDir/Build/$currentFolder.xcodeproj" "${currentFolder}.xcodeproj"
 
 	if [ -d "./Build" ]; then
-		printf "\e[0;32mUpdating build.\e[0m \n"
+		printf "\e[0;32mUpdating build at $(pwd)/Build.\e[0m \n"
 	else
-		printf "\e[0;32mGenerating build.\e[0m \n"
+		printf "\e[0;32mGenerating build at $(pwd)/Build.\e[0m \n"
 		mkdir Build
 		#chflags hidden Build
 	fi
 	cd $(pwd)/Build
-	printf "\e[0;32m$(pwd)\e[0m \n"
+	#printf "\e[0;32m$(pwd)\e[0m \n"
 	"$CMake" -G Xcode "$cmakeListsDir"
 	"$CMake" -G Xcode "$cmakeListsDir"
 	cd ..
