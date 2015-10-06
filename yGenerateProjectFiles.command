@@ -9,4 +9,6 @@ sh ${currentDir}/zGenerateProjectFiles.sh
 
 osDir=:Macintosh\ HD${currentDir//[\/]/\:}
 
-osascript -e "tell application \"Finder\" to make alias to \"${osDir}:Build:${currentFolder}.xcodeproj\" at \"${osDir}\""
+if ! [ -f "${currentFolder}.xcodeproj" ]; then
+	osascript -e "tell application \"Finder\" to make alias to \"${osDir}:Build:${currentFolder}.xcodeproj\" at \"${osDir}\""
+fi
