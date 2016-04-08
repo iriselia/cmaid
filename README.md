@@ -11,7 +11,7 @@ Sample program to demonstrate the robust features provided by [Purify](https://g
 
 
  
-[Purify](https://github.com/piaoasd123/Purify) is a [CMake](http://www.cmake.org/)-based automated build tool Developed by [Frank Park](https://www.linkedin.com/profile/view?id=365243381). Purify aims to significantly reduce the amount of learning required to fully utilize the productivity of CMake. It is designed to enable fast iteration and allow programmers create and maintain source code with ease.
+[Purify](https://github.com/piaoasd123/Purify) is a [CMake](http://www.cmake.org/)-based automated build tool Developed by [Frank Park](https://www.linkedin.com/in/fpark12). Purify aims to significantly reduce the amount of learning required to fully utilize the productivity of CMake. It is designed to enable fast iteration and allow programmers create and maintain source code with ease.
 
 Purify is particularly suited for C++ development with [Visual Studio](http://www.visualstudio.com/) and [XCode](https://developer.apple.com/xcode/) while being mostly compatible with any other build environments supported by CMake.
 
