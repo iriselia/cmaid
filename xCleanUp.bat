@@ -1,3 +1,7 @@
+rem ## back up CWD
+pushd "%~dp0"
+cd "%~dp0"
+
 del *.sln
 del *.lnk
 for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
