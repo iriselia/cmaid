@@ -20,4 +20,4 @@ if [ -d "$(pwd)/Binaries" ]; then
 	cd ../
 fi
 
-rm -d Binaries > /dev/null 2>&1
+#rm -d Binaries > /dev/null 2>&1
