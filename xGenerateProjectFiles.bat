@@ -5,7 +5,20 @@ pushd "%~dp0"
 
 rem ## Find Git from GitHub
 for /d %%a in ("%LOCALAPPDATA%\GitHub\PortableGit*") do (set Git=%%~fa\cmd\Git.exe)
-if Git == "" ( goto Error_MissingGitHub )
+if exist "%Git%" ( goto GitFound )
+
+rem ## Find Git for windows
+if exist "%PROGRAMFILES%\Git\bin\git.exe" (
+	set Git=%PROGRAMFILES%\Git\bin\git.exe
+	goto GitFound
+)
+if exist "%PROGRAMFILES(x86)%\Git\bin\git.exe" (
+	set Git=%PROGRAMFILES(x86)%\Git\bin\git.exe
+	goto GitFound
+)
+
+goto Error_MissingGit
+:GitFound
 
 rem ## Find CMake or clone from Git
 for %%X in (cmake.exe) do (set CMakePath=%%~$PATH:X)
@@ -13,9 +26,9 @@ if not defined CMakePath (
 	IF NOT EXIST %~dp0\CMake\bin\cmake.exe (
 		echo Purify is cloning a portable CMake from GitHub...
 		echo.
-		mkdir CMake
+		if not exist CMake (mkdir CMake)
 		Attrib +h +s +r CMake
-		%Git% clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
+		"%Git%" clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
 		echo.
 	)
 	set CMakePath="%~dp0\CMake\bin\cmake.exe"
@@ -112,9 +125,9 @@ del %SCRIPT%
 rem ## Finish up
 goto Exit
 
-:Error_MissingGitHub
+:Error_MissingGit
 echo.
-echo GenerateProjectFiles ERROR: It looks like you have not installed GitHub. It is required for Purify to work.
+echo GenerateProjectFiles ERROR: It looks like you have not installed Git or GitHub. It is required for Purify to work.
 echo.
 pause
 goto Exit
