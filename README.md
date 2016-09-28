@@ -1,5 +1,15 @@
-Purify Sample Project - Windows & Mac OS X
-=====
+# Purify
+
+This is a lazy, cross-platform build manager for C++ written in [CMake](http://www.cmake.org/), Batch scripts, and Shell scripts and licensed under BSD 3-clause License. It was designed to minimize the effort to create and maintain cross-platform C++ projects.
+
+# Features
+- Off-the-shelf solution for lazy management of cross-platform C++ builds.
+- CMake scripting is optional.
+- Keeps the project clean by seperating the source tree from the build tree.
+- Automatically creates include directory tree for external projects.
+- Generates symbol export/import macros for dynamic library projects.
+- Improves build speed by managing pre-compiled headers and forced-included headers based on config files
+
 
 Sample program to demonstrate the robust features provided by [Purify](https://github.com/piaoasd123/Purify).
 
