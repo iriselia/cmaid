@@ -35,18 +35,18 @@ if not defined CMakePath (
 )
 
 rem ## Find Purify or clone from Git
-IF NOT EXIST %~dp0\Purify (
+IF NOT EXIST %~dp0\Purify\Purify.cmake (
 		mkdir Purify
 		Attrib +h +s +r Purify
 		echo Purify is cloning itself from GitHub...
 		echo.
-		"%Git%" clone https://github.com/piaoasd123/Purify.git
+		"%Git%" clone https://github.com/piaoasd123/PurifyCore.git Purify
 		echo.
 ) else (
 		echo Purify is updating...
 		echo.
 		pushd %~dp0\Purify\
-		1>NUL "%Git%" pull https://github.com/piaoasd123/Purify.git
+		1>NUL "%Git%" pull https://github.com/piaoasd123/PurifyCore.git
 		popd
 		echo.
 )

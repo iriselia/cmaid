@@ -73,13 +73,13 @@ if [ "$(uname)" = "Darwin" ]; then
 		fi
 	fi
 
-	purify="$(pwd)/Purify"
+	purify="$(pwd)/Purify/Purify.cmake"
 
 	if [ -d "$purify" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
 			cd Purify
-			git pull "https://github.com/piaoasd123/Purify.git"
+			git pull "https://github.com/piaoasd123/PurifyCore.git"
 			cd ..
 		else
 			printf "\e[0;33mWarning: Skip updating Purify due to lack of network connection. \e[0m \n"
@@ -90,7 +90,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
 			mkdir Purify
 			chflags hidden Purify
-			git clone "https://github.com/piaoasd123/Purify.git"
+			git clone "https://github.com/piaoasd123/PurifyCore.git" Purify
 			
 			if [ -d "$purify" ]; then
 				printf "\e[0;32mDownload complete: Purify.\e[0m \n"
