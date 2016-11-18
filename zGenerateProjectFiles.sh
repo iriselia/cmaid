@@ -59,7 +59,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;33mWarning: Could not find CMake, start downloading CMake. \e[0m \n"
 			mkdir CMake
 			chflags hidden CMake
-			git clone "https://github.com/piaoasd123/PortableCMake-MacOSX.git" CMake
+			git clone "https://github.com/fpark12/PortableCMake-MacOSX.git" CMake
 			chmod 777 "$PortableCMake"
 			if [ -f "$PortableCMake" ]; then
 				CMake="$PortableCMake"
@@ -79,7 +79,7 @@ if [ "$(uname)" = "Darwin" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
 			cd Purify
-			git pull "https://github.com/piaoasd123/PurifyCore.git"
+			git pull "https://github.com/fpark12/PurifyCore.git"
 			cd ..
 		else
 			printf "\e[0;33mWarning: Skip updating Purify due to lack of network connection. \e[0m \n"
@@ -90,7 +90,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
 			mkdir Purify
 			chflags hidden Purify
-			git clone "https://github.com/piaoasd123/PurifyCore.git" Purify
+			git clone "https://github.com/fpark12/PurifyCore.git" Purify
 			
 			if [ -d "$purify" ]; then
 				printf "\e[0;32mDownload complete: Purify.\e[0m \n"
