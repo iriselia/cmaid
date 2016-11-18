@@ -28,7 +28,7 @@ if not defined CMakePath (
 		echo.
 		if not exist CMake (mkdir CMake)
 		Attrib +h +s +r CMake
-		"%Git%" clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
+		"%Git%" clone https://github.com/fpark12/PortableCMake-Win32.git CMake
 		echo.
 	)
 	set CMakePath="%~dp0\CMake\bin\cmake.exe"
@@ -40,13 +40,13 @@ IF NOT EXIST %~dp0\Purify\Purify.cmake (
 		Attrib +h +s +r Purify
 		echo Purify is cloning itself from GitHub...
 		echo.
-		"%Git%" clone https://github.com/piaoasd123/PurifyCore.git Purify
+		"%Git%" clone https://github.com/fpark12/PurifyCore.git Purify
 		echo.
 ) else (
 		echo Purify is updating...
 		echo.
 		pushd %~dp0\Purify\
-		1>NUL "%Git%" pull https://github.com/piaoasd123/PurifyCore.git
+		1>NUL "%Git%" pull https://github.com/fpark12/PurifyCore.git
 		popd
 		echo.
 )
