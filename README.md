@@ -16,6 +16,8 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
+ - Traditional CMake:
+ 
 `cmake_example/CMakeLists.txt`, a top-level `CMakeLists.txt` with traditional CMake:
 ```CMake
 cmake_minimum_required (VERSION 3.0)
@@ -39,8 +41,9 @@ add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
-
-`cmake_example/CMakeLists.txt` with Purify:
+ - Purify:
+ 
+`cmake_example/CMakeLists.txt`:
 ```CMake
 cmake_minimum_required( VERSION 3.0 )
 include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
@@ -50,7 +53,7 @@ SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 create_build( GLOBAL_DEFINITIONS )
 ```
 
-`cmake_example/foo/CMakeLists.txt` with Purify:
+`cmake_example/foo/CMakeLists.txt`:
 ```CMake
 set( DEFINE foo_macro ptr_size=8)
 set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
