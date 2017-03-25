@@ -16,29 +16,45 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
+Traditional subdirectory `CMakeLists.txt`:
+```CMake
+project(foo)
+add_library (foo foo.cpp foo.h)
+add_definitions("-Dfoo_macro -Dptr_size=8")
+target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(foo PROPERTIES FOLDER "foo")
+```
+With Purify:
+```CMake
+set( DEFINE foo_macro ptr_size=8)
+set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
+set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both absolute directories and targets
+
+create_project(CONSOLE DEFINE INCLUDE LINK)
+```
 
 Traditional top-level `CMakeLists.txt`:
-```
+```CMake
 cmake_minimum_required (VERSION 3.0)
-project (HELLO)
+project (cmake_example)
 
-add_definition(-D_CRT_SECURE_NO_WARNINGS -DDemo_Macro)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS -DDemo_Macro)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_subdirectory (Hello)
-add_subdirectory (Demo)
-
-target_link_libraries(Demo PUBLIC Hello)
+add_subdirectory (foo)
+add_subdirectory (bar)
+add_subdirectory (myproject)
 ```
 
 With Purify:
 
-```
+```CMake
 cmake_minimum_required( VERSION 3.0 )
 include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
 
-SET( GLOBAL_DEFINE _CRT_SECURE_NO_WARNINGS Demo_Macro)
+SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 
-create_build( GLOBAL_DEFINE )
+create_build( GLOBAL_DEFINITIONS )
 ```
 
 Features:
