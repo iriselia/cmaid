@@ -64,9 +64,9 @@ add_executable (myexe myexe.cpp myexe.h)
 
 add_definitions("-Dmyexe_macro -Dptr_size=8")
 target_include_directories (myexe PUBLIC ${CMAKE_SOURCE_DIR}/bar ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(bar PUBLIC foo)
+target_link_libraries(myexe PUBLIC bar)
 
-set_target_properties(bar PROPERTIES FOLDER "bar")
+set_target_properties(myexe PROPERTIES FOLDER "myexe")
 ```
 
 __Purify:__
