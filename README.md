@@ -18,7 +18,7 @@ Examples:
 -------
 __Traditional CMake:__
  
-`cmake_example/CMakeLists.txt`, a top-level `CMakeLists.txt` with traditional CMake:
+Top-level: `cmake_example/CMakeLists.txt`:
 ```CMake
 cmake_minimum_required (VERSION 3.0)
 project (cmake_example)
@@ -31,15 +31,24 @@ add_subdirectory (bar)
 add_subdirectory (myproject)
 ```
 
-`cmake_example/foo/CMakeLists.txt`, a subdirectory `CMakeLists.txt` with traditional CMake:
+Static lib /foo: `cmake_example/foo/CMakeLists.txt`:
 ```CMake
 project(foo)
 
-add_library (foo foo.cpp foo.h)
+add_library (foo STATIC foo.cpp foo.h)
 
 add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
+```
+
+Shared lib /bar: `cmake_example/foo/CMakeLists.txt`:
+```CMake
+project(bar)
+
+add_library (bar SHARED bar.cpp bar.h)
+target_include_directories (bar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(bar PROPERTIES FOLDER "bar")
 ```
 __Purify:__
  
