@@ -19,7 +19,9 @@ Examples:
 Traditional subdirectory `CMakeLists.txt`:
 ```CMake
 project(foo)
+
 add_library (foo foo.cpp foo.h)
+
 add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
