@@ -16,7 +16,7 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
-Traditional subdirectory `CMakeLists.txt`:
+`cmake_example/foo/CMakeLists.txt`, a subdirectory `CMakeLists.txt` with traditional CMake:
 ```CMake
 project(foo)
 
@@ -26,7 +26,7 @@ add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
-With Purify:
+With Purify you can write:
 ```CMake
 set( DEFINE foo_macro ptr_size=8)
 set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
@@ -35,7 +35,7 @@ set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both abso
 create_project(CONSOLE DEFINE INCLUDE LINK)
 ```
 
-Traditional top-level `CMakeLists.txt`:
+`cmake_example/CMakeLists.txt`, a top-level `CMakeLists.txt` with traditional CMake:
 ```CMake
 cmake_minimum_required (VERSION 3.0)
 project (cmake_example)
@@ -48,7 +48,7 @@ add_subdirectory (bar)
 add_subdirectory (myproject)
 ```
 
-With Purify:
+With Purify you can write:
 
 ```CMake
 cmake_minimum_required( VERSION 3.0 )
