@@ -16,7 +16,7 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
- - Traditional CMake:
+__Traditional CMake:__
  
 `cmake_example/CMakeLists.txt`, a top-level `CMakeLists.txt` with traditional CMake:
 ```CMake
@@ -41,7 +41,7 @@ add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
- - Purify:
+__Purify:__
  
 `cmake_example/CMakeLists.txt`:
 ```CMake
