@@ -28,7 +28,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory (foo)
 add_subdirectory (bar)
-add_subdirectory (myexe)
 ```
 
 Static lib foo, `cmake_example/foo/CMakeLists.txt`:
