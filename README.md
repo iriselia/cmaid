@@ -38,7 +38,8 @@ project(foo)
 add_library (foo STATIC foo.cpp foo.h)
 
 add_definitions("-Dfoo_macro -Dptr_size=8")
-target_include_directories (foo PUBLIC ${CMAKE_SOURCE_DIR}/lib)
+target_include_directories (foo PUBLIC ${CMAKE_SOURCE_DIR}/lib ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib/3rdparty.lib)
 
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
@@ -50,7 +51,7 @@ project(bar)
 add_library (bar SHARED bar.cpp bar.h)
 
 add_definitions("-Dbar_macro -Dptr_size=8")
-target_include_directories (bar PUBLIC ${CMAKE_SOURCE_DIR}/bar ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (bar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(bar PUBLIC foo)
 
 set_target_properties(bar PROPERTIES FOLDER "bar")
@@ -63,10 +64,12 @@ project(myexe)
 add_executable (myexe myexe.cpp myexe.h)
 
 add_definitions("-Dmyexe_macro -Dptr_size=8")
-target_include_directories (myexe PUBLIC ${CMAKE_SOURCE_DIR}/bar ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories (myexe PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(myexe PUBLIC bar)
 
 set_target_properties(myexe PROPERTIES FOLDER "myexe")
+
+message("My project name is: myexe")
 ```
 
 __Purify:__
@@ -84,8 +87,8 @@ create_build( GLOBAL_DEFINITIONS )
 Static lib foo: `cmake_example/foo/CMakeLists.txt`:
 ```CMake
 set( DEFINE foo_macro ptr_size=8)
-set( INCLUDE ${CMAKE_SOURCE_DIR}/lib bar) # Notice INCLUDE can handle both folders and targets
-set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both absolute directories and targets
+set( INCLUDE ${CMAKE_SOURCE_DIR}/lib)
+set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib)
 
 create_project(CONSOLE DEFINE INCLUDE LINK)
 ```
@@ -93,10 +96,26 @@ create_project(CONSOLE DEFINE INCLUDE LINK)
 Shared lib bar which links foo: `cmake_example/foo/CMakeLists.txt`:
 ```CMake
 set( DEFINE bar_macro ptr_size=8)
-set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
-set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both absolute directories and targets
+set( INCLUDE foo ${CMAKE_CURRENT_SOURCE_DIR})
+set( LINK foo)
 
 create_project(CONSOLE DEFINE INCLUDE LINK)
+```
+
+Executable myexe which links bar, `cmake_example/myexe/CMakeLists.txt`:
+```CMake
+project(myexe)
+
+add_executable (myexe myexe.cpp myexe.h)
+
+add_definitions("-Dmyexe_macro -Dptr_size=8")
+target_include_directories (myexe PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(myexe PUBLIC bar)
+
+set_target_properties(myexe PROPERTIES FOLDER "myexe")
+
+# Purify automatically sets ${PROJECT_NAME} to the name of the folder where the `CMakeLists.h` is located.
+message("My project name is: ${PROJECT_NAME}") 
 ```
 
 Features:
