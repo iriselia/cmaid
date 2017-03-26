@@ -111,12 +111,7 @@ __Compiler:__
  
 __Dependencies:__
 
- - Git or GitHub for Desktop (Required for batch and shell scripts)
-
-Build:
--------
- - Install [Github Desktop](https://desktop.github.com/).
- - Clone Purify to desktop.
- - Execute the appropriate "GenerateProjectFiles" script for your platform to generate the project file.
- - Optionally, you can install [CMake](http://www.cmake.org/) and "Add CMake to System PATH". This will accelerate the first build generation for a Purify-based project as CMake no longer needs to be downloaded from an externally repository.
-
+ - [Git](https://git-scm.com/) or [GitHub for Desktop](https://desktop.github.com/) (Required for batch and shell scripts)
+ 
+__Optional:__
+ - [CMake](https://cmake.org/) (A portable version can be automatically downloaded by the shell scripts)
