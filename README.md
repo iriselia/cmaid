@@ -17,6 +17,10 @@ Purify was designed to minimize the amount of labor required to create and maint
 The benefits include:
  * `CMakeLists.txt` files become shorter and easier to maintain and modify,
  * each project within a Purify-based build is highly modular, so a simple copy and paste would allow it to be reused in another Purify based project,
+ * the source tree and the file system will be kept in sync through automatically creating filters and naming projects based on the file system,
+ * platform dependent features such as forced-include and precompiled headers which require careful maintenance have been automated,
+ * common source files such as .ini, .vert, .frag can be placed in source folders, and be will automatically copied to the correct relative paths to the binaries folder,
+ * automatic generation of symbol import/export API, i.e. `__declspec(dllexport)`, `__declspec(dllimport)`, and various macro chains,
  * No need for repetitive CMake scripting at all except when complex build behaviors are desired. (Such as precompiling .proto files with Google's protobuf compiler.)
 
 Examples:
