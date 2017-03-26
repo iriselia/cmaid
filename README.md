@@ -14,8 +14,9 @@ Purify was designed to minimize the amount of labor required to create and maint
    * automating certain build behavior to simplify the process of writing `CMakeLists.txt` files to generate a project, while
    * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
 
-Examples:
+Getting started:
 -------
+Here is a direct comparison of the traditional `CMakeLists.txt` and the Purify `CMakeLists.txt`. It is only meant to get you started so that you can utilize other advanced features Purify offers.
 __Traditional CMake:__
  
 Top-level: `cmake_example/CMakeLists.txt`:
@@ -98,16 +99,6 @@ create_project(CONSOLE DEFINE INCLUDE LINK)
 # Purify automatically sets ${PROJECT_NAME} to the name of the folder where the `CMakeLists.h` is located.
 message("My project name is: ${PROJECT_NAME}") 
 ```
-
-Features:
--------
-- Off-the-shelf solution for lazy management of cross-platform C++ builds.
-- CMake scripting is optional.
-- Keeps the project clean by allowing the build tree to completely seperate from the source tree.
-- Automatically creates include directory tree for external projects.
-- Generates symbol export/import macros for dynamic library projects.
-- Improves build speed by managing pre-compiled headers and forced-included headers based on config files
-
 
 Build:
 -------
