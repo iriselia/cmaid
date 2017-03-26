@@ -6,4 +6,4 @@ SET( INCLUDE
 SET( LINK
 )
 
-create_project(SHARED "${DEFINE}" "${INCLUDE}" "${LINK}")
+create_project(SHARED DEFINE INCLUDE LINK)

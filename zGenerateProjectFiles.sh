@@ -73,7 +73,7 @@ if [ "$(uname)" = "Darwin" ]; then
 		fi
 	fi
 
-	purify="$(pwd)/Purify/Purify.cmake"
+	purify="$(pwd)/Purify/Main.cmake"
 
 	if [ -d "$purify" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then

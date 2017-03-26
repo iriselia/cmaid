@@ -3,6 +3,10 @@
 rem ## back up CWD
 pushd "%~dp0"
 
+if not defined CMAKE_BUILD_FLAG (
+	set CMAKE_BUILD_FLAG="FULL"
+)
+
 rem ## Find Git from GitHub
 for /d %%a in ("%LOCALAPPDATA%\GitHub\PortableGit*") do (set Git=%%~fa\cmd\Git.exe)
 if exist "%Git%" ( goto GitFound )
@@ -24,26 +28,33 @@ rem ## Find CMake or clone from Git
 for %%X in (cmake.exe) do (set CMakePath=%%~$PATH:X)
 if not defined CMakePath (
 	IF NOT EXIST %~dp0\CMake\bin\cmake.exe (
-		echo Purify is cloning a portable CMake from GitHub...
+		echo Cloning portable CMake from GitHub...
 		echo.
 		if not exist CMake (mkdir CMake)
 		Attrib +h +s +r CMake
 		"%Git%" clone https://github.com/fpark12/PortableCMake-Win32.git CMake
+		echo.
+	) else (
+		echo Updating portable CMake...
+		echo.
+		pushd %~dp0\CMake\
+		1>NUL "%Git%" pull https://github.com/fpark12/PortableCMake-Win32.git
+		popd
 		echo.
 	)
 	set CMakePath="%~dp0\CMake\bin\cmake.exe"
 )
 
 rem ## Find Purify or clone from Git
-IF NOT EXIST %~dp0\Purify\Purify.cmake (
+IF NOT EXIST %~dp0\Purify\Main.cmake (
 		mkdir Purify
 		Attrib +h +s +r Purify
-		echo Purify is cloning itself from GitHub...
+		echo Cloning Purify from GitHub...
 		echo.
 		"%Git%" clone https://github.com/fpark12/PurifyCore.git Purify
 		echo.
 ) else (
-		echo Purify is updating...
+		echo Updating Purify...
 		echo.
 		pushd %~dp0\Purify\
 		1>NUL "%Git%" pull https://github.com/fpark12/PurifyCore.git
@@ -51,59 +62,70 @@ IF NOT EXIST %~dp0\Purify\Purify.cmake (
 		echo.
 )
 
-rem ## Find Visual Studio 2013 Full & Express
+rem ## Find Visual Studio
+:FindVS2017
+pushd %~dp0\Purify\BatchFiles
+call GetVSComnToolsPath 15
+popd
+if "%VsComnToolsPath%" == "" goto FindVS2015
+set CMakeArg="Visual Studio 15 2017 Win64"
+goto ReadyToBuild
 :FindVS2015
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 14
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2013
-set CMakeArg="Visual Studio 14 2015"
+set CMakeArg="Visual Studio 14 2015 Win64"
 goto ReadyToBuild
 :FindVS2013
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 12
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2012
-set CMakeArg="Visual Studio 12 2013"
+set CMakeArg="Visual Studio 12 2013 Win64"
 goto ReadyToBuild
 :FindVS2012
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 11
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2010
-set CMakeArg="Visual Studio 11 2012"
+set CMakeArg="Visual Studio 11 2012 Win64"
 goto ReadyToBuild
 :FindVS2010
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 10
 popd
 if "%VsComnToolsPath%" == "" goto Error_MissingVisualStudio
-set CMakeArg="Visual Studio 10 2010"
+set CMakeArg="Visual Studio 10 2010 Win64"
 goto ReadyToBuild
 
 call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
+
 :ReadyToBuild
-echo Purify is setting up project files...
-if NOT EXIST %~dp0\Build (
+echo Setting up project files...
+echo.
+if NOT EXIST %~dp0\Build\CMakeCache.txt (
 	goto InitialBuild
 ) else (
 	goto Rebuild
 )
 
 :InitialBuild
+2>NUL mkdir x64
+Attrib +h +s +r x64
 2>NUL mkdir Build
 Attrib +h +s +r Build
 pushd %~dp0\Build
 rem ## build twice here because first build generates cache
-1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
-1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
+"%CMakePath%" -G %CMakeArg% %~dp0 -DCMAKE_BUILD_FLAG=%CMAKE_BUILD_FLAG% || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
 
 :Rebuild
+2>NUL mkdir x64
+Attrib +h +s +r x64
 pushd %~dp0\Build
-1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
-1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
+"%CMakePath%" -G %CMakeArg% %~dp0 -DCMAKE_BUILD_FLAG=%CMAKE_BUILD_FLAG% || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
 
@@ -122,8 +144,11 @@ echo oLink.Save >> %SCRIPT%
 cscript /nologo %SCRIPT%
 del %SCRIPT%
 
+:RemoveAllBuild
+1>NUL 2>NUL "%CMakePath%" -P "%~dp0/Purify/Core/RemoveAllBuild.cmake"
+
 rem ## Finish up
-goto Exit
+goto GenerateSuccess
 
 :Error_MissingGit
 echo.
@@ -139,7 +164,37 @@ echo.
 pause
 goto Exit
 
+:Error_FailedToGenerateSolution:
+echo.
+echo GenerateProjectFiles ERROR: Error detected while generating.
+echo.
+set /p "=> Press enter to regenerate or press any other key to exit... " <nul
+PowerShell Exit($host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown').VirtualKeyCode);
+set KeyCode=%ErrorLevel%
+echo.
+cls
+if %KeyCode%==13 (
+goto Rebuild
+) else (
+echo %KeyCode%
+goto Exit
+)
+
+:GenerateSuccess
+echo.
+set /p "=> Project successfully generated. Press enter to regenerate or press any other key to exit... " <nul
+PowerShell Exit($host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown').VirtualKeyCode);
+set KeyCode=%ErrorLevel%
+echo.
+cls
+if %KeyCode%==13 (
+goto Rebuild
+) else (
+echo %KeyCode%
+goto Exit
+)
 
 :Exit
 rem ## Restore original CWD in case we change it
 popd
+
