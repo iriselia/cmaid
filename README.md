@@ -16,7 +16,7 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
-Here is a direct comparison of the traditional `CMakeLists.txt` and the Purify `CMakeLists.txt`. It is only meant to get you started so that you can utilize other advanced features Purify offers.
+Here is a direct comparison of the traditional `CMakeLists.txt` approach and the Purify one. It is only meant to get you started using Purify's helper functions so that you can utilize other advanced features.
 
 __Traditional CMake:__
  
