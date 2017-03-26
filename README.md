@@ -48,7 +48,7 @@ target_link_libraries(foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib/3rdparty.lib)
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
 
-Executable bar links foo and 3rdparty.lib, `cmake_example/bar/CMakeLists.txt`:
+Executable bar links foo, `cmake_example/bar/CMakeLists.txt`:
 ```CMake
 project(bar)
 
@@ -88,7 +88,7 @@ set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib)
 create_project(STATIC DEFINE INCLUDE LINK)
 ```
 
-Executable bar links foo and 3rdparty.lib, `cmake_example/bar/CMakeLists.txt`:
+Executable bar links foo, `cmake_example/bar/CMakeLists.txt`:
 ```CMake
 set( DEFINE bar_macro ptr_size=8)
 set( INCLUDE foo)
@@ -100,6 +100,15 @@ create_project(CONSOLE DEFINE INCLUDE LINK)
 # Purify automatically sets ${PROJECT_NAME} to the name of the folder where the `CMakeLists.h` is located.
 message("My project name is: ${PROJECT_NAME}") 
 ```
+
+Requirements:
+__Compiler:__
+ - MSVC 2010 or above
+ - XCode
+ - gcc (Experimental)
+ 
+__Batch script dependencies:__
+ - Git (To download CMake and Purify from GitHub)
 
 Build:
 -------
