@@ -102,13 +102,16 @@ message("My project name is: ${PROJECT_NAME}")
 ```
 
 Requirements:
+-------
 __Compiler:__
+
  - MSVC 2010 or above
  - XCode
  - gcc (Experimental)
  
-__Batch script dependencies:__
- - Git (To download CMake and Purify from GitHub)
+__Recommended Dependencies:__
+
+ - Git or GitHub for Desktop (Required for batch and shell scripts)
 
 Build:
 -------
