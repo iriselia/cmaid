@@ -105,9 +105,9 @@ Requirements:
 -------
 __Compiler:__
 
- - MSVC 2010 or above
- - XCode
- - gcc (Experimental)
+ - MSVC 2010 or above on Windows
+ - Xcode on OS X
+ - g++ (Experimental)
  
 __Recommended Dependencies:__
 
