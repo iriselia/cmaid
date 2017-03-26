@@ -109,7 +109,7 @@ __Compiler:__
  - Xcode on OS X
  - g++ (Experimental)
  
-__Recommended Dependencies:__
+__Dependencies:__
 
  - Git or GitHub for Desktop (Required for batch and shell scripts)
 
