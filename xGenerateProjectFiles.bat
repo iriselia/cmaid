@@ -51,13 +51,13 @@ IF NOT EXIST %~dp0\Purify\Core\Loader.cmake (
 		Attrib +h +s +r Purify
 		echo Cloning Purify from GitHub...
 		echo.
-		"%Git%" clone https://github.com/fpark12/PurifyCore.git Purify\Core
+		"%Git%" clone https://github.com/fpark12/Purify.Core.git Purify\Core
 		echo.
 ) else (
 		echo Updating Purify...
 		echo.
 		pushd %~dp0\Purify\Core
-		1>NUL "%Git%" pull https://github.com/fpark12/PurifyCore.git
+		1>NUL "%Git%" pull https://github.com/fpark12/Purify.Core.git
 		popd
 		echo.
 )

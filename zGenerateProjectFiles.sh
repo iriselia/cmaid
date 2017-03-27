@@ -79,7 +79,7 @@ if [ "$(uname)" = "Darwin" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
 			cd Purify/Core
-			git pull "https://github.com/fpark12/PurifyCore.git"
+			git pull "https://github.com/fpark12/Purify.Core.git"
 			cd ..
 		else
 			printf "\e[0;33mWarning: Skip updating Purify due to lack of network connection. \e[0m \n"
@@ -90,7 +90,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
 			mkdir Purify
 			chflags hidden Purify
-			git clone "https://github.com/fpark12/PurifyCore.git" Purify/Core
+			git clone "https://github.com/fpark12/Purify.Core.git" Purify/Core
 			
 			if [ -d "$purify" ]; then
 				printf "\e[0;32mDownload complete: Purify.\e[0m \n"
