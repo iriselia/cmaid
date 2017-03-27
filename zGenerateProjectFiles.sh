@@ -73,12 +73,12 @@ if [ "$(uname)" = "Darwin" ]; then
 		fi
 	fi
 
-	purify="$(pwd)/Purify/Core/Loader.cmake"
+	purify="$(pwd)/Purify/Loader.cmake"
 
 	if [ -d "$purify" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
-			cd Purify/Core
+			cd Purify
 			git pull "https://github.com/fpark12/Purify.Core.git"
 			cd ..
 		else
@@ -90,7 +90,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
 			mkdir Purify
 			chflags hidden Purify
-			git clone "https://github.com/fpark12/Purify.Core.git" Purify/Core
+			git clone "https://github.com/fpark12/Purify.Core.git" Purify
 			
 			if [ -d "$purify" ]; then
 				printf "\e[0;32mDownload complete: Purify.\e[0m \n"
