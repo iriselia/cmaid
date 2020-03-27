@@ -63,7 +63,7 @@ IF NOT EXIST %~dp0\Scripts\Loader.cmake (
 ) else (
 		echo Updating cmaid...
 		echo.
-		1>NUL "%Git%" submodule update
+		1>NUL "%Git%" pull https://github.com/jpark730/cmaid.git
 		popd
 		echo.
 )
