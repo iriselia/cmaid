@@ -50,24 +50,25 @@ if not defined CMakePath (
 	set CMakePath="%~dp0\CMake\bin\cmake.exe"
 )
 
-rem ## Find Purify or clone from Git
-IF NOT EXIST %~dp0\Purify\Loader.cmake (
-		mkdir Purify
-		Attrib +h +s +r Purify
-		echo Cloning Purify from GitHub...
+rem ## Find cmaid or clone from Git
+IF NOT EXIST %~dp0\Scripts\Loader.cmake (
+		mkdir cmaid
+		Attrib +h +s +r cmaid
+		echo Cloning cmaid from GitHub...
 		echo.
-		"%Git%" clone https://github.com/jpark730/Purify.git Purify
+		pushd %~dp0\..\
+		"%Git%" clone https://github.com/jpark730/cmaid.git cmaid
+		popd
 		echo.
 ) else (
-		echo Updating Purify...
+		echo Updating cmaid...
 		echo.
-		pushd %~dp0\Purify
-		1>NUL "%Git%" pull https://github.com/jpark730/Purify.git
+		1>NUL "%Git%" submodule update
 		popd
 		echo.
 )
 
-Purify/GenerateProjectFiles.bat
+rem Purify/GenerateProjectFiles.bat
 
 :Exit
 rem ## Restore original CWD in case we change it
