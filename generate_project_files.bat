@@ -51,7 +51,7 @@ if not defined CMakePath (
 )
 
 rem ## Find cmaid or clone from Git
-IF NOT EXIST %~dp0\scripts\Loader.cmake (
+IF NOT EXIST %~dp0\loader.cmake (
 		mkdir cmaid
 		Attrib +h +s +r cmaid
 		echo Cloning cmaid from GitHub...
@@ -64,11 +64,11 @@ IF NOT EXIST %~dp0\scripts\Loader.cmake (
 		echo Updating cmaid...
 		echo.
 		1>NUL "%Git%" pull https://github.com/jpark730/cmaid.git
-		popd
 		echo.
 )
 
-scripts/GenerateProjectFiles.bat
+call scripts\windows_generate_project_files.bat
+goto Exit
 
 :Exit
 rem ## Restore original CWD in case we change it

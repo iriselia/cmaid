@@ -24,18 +24,9 @@ macro( create_build global_define )
 	project( ${SOLUTION_NAME} )
 
 	#find all CMakeLists.txt files in the project folder recursively.
-	file(GLOB_RECURSE normalPriorityProjectsRaw ${CMAKE_SOURCE_DIR}/CMakeLists.txt)
-	list(REMOVE_ITEM normalPriorityProjectsRaw ${CMAKE_SOURCE_DIR}/CMakeLists.txt)
-
-	#Cache root directories of all projects
-	set(CMAKE_ALL_PROJECT_DIRS "" CACHE STRING "" FORCE)
-	foreach(file ${normalPriorityProjectsRaw})
-		get_filename_component(fileDir ${file} DIRECTORY)
-		list(APPEND CMAKE_ALL_PROJECT_DIRS ${fileDir})
-		list(APPEND normalPriorityProjects ${fileDir}/CMakeLists.txt)
-	endforeach()
-	#set(CMAKE_ALL_PROJECT_DIRS "${CMAKE_ALL_PROJECT_DIRS}" CACHE STRING "")
-
+	file(GLOB_RECURSE normalPriorityProjects ${CMAKE_SOURCE_DIR}/CMakeLists.txt)
+	list(REMOVE_ITEM normalPriorityProjects ${CMAKE_SOURCE_DIR}/CMakeLists.txt)
+	list(FILTER normalPriorityProjects EXCLUDE REGEX "^${CMAKE_MODULE_PATH}") 
 
 	# Find out if there are high priority projects
 	# High priority projects are meant to facilitate custom source code generation steps
@@ -261,7 +252,7 @@ macro(AddProject projects)
 		# Add symbol export file for each project
 		if( ("${${PROJECT_NAME}_MODE}" STREQUAL "CONSOLE") OR ("${${PROJECT_NAME}_MODE}" STREQUAL "WIN32") )
 		else()
-			CONFIGURE_FILE(${CMAKE_MODULE_PATH}/Detail/SymbolExportAPITemplate.template ${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}_API.generated.h @ONLY)
+			CONFIGURE_FILE(${CMAKE_MODULE_PATH}/scripts/Misc/SymbolExportAPITemplate.template ${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}_API.generated.h @ONLY)
 			set(${PROJECT_NAME}_EXPORT_API "${PROJECT_NAME}_ExportAPI.generated.h" CACHE STRING "")
 		endif()
 

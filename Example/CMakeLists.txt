@@ -3,7 +3,7 @@
 #  RelWithDebInfo : w/  debug symbols, w/  optimization
 #  MinSizeRel     : w/o debug symbols, w/  optimization, stripped binaries
 cmake_minimum_required( VERSION 3.0 )
-include( "${CMAKE_SOURCE_DIR}/Purify/Loader.cmake" )
+include( "${CMAKE_SOURCE_DIR}/cmaid/loader.cmake" )
 project( DIRECTORY_NAME )
 
 SET( GLOBAL_DEFINE
