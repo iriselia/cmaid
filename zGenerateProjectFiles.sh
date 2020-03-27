@@ -35,8 +35,8 @@ fi
 if [ "$(uname)" = "Darwin" ]; then
 	CMake="/Applications/CMake.app/Contents/bin/cmak1e"
 	PortableCMake="$(pwd)/CMake/bin/cmake"
-	GitHub="/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
-	GitHubUser="/Users/$username/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
+	GitHub="/Applications/GitHub Desktop.app/Contents/Resources/app/git/bin/git"
+	GitHubUser="/Users/$username/Applications/GitHub Desktop.app/Contents/Resources/app/git/bin/git"
 	isGitHubAvailable=false
 
 	if [ -f "$GitHub" ]; then
@@ -59,7 +59,7 @@ if [ "$(uname)" = "Darwin" ]; then
 			printf "\e[0;33mWarning: Could not find CMake, start downloading CMake. \e[0m \n"
 			mkdir CMake
 			chflags hidden CMake
-			git clone "https://github.com/fpark12/PortableCMake-MacOSX.git" CMake
+			git clone "https://github.com/jpark730/PortableCMake-MacOSX.git" CMake
 			chmod 777 "$PortableCMake"
 			if [ -f "$PortableCMake" ]; then
 				CMake="$PortableCMake"
@@ -75,11 +75,11 @@ if [ "$(uname)" = "Darwin" ]; then
 
 	purify="$(pwd)/Purify/Loader.cmake"
 
-	if [ -d "$purify" ]; then
+	if [ -f "$purify" ]; then
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mPulling latest build script from GitHub.\e[0m \n"
 			cd Purify
-			git pull "https://github.com/fpark12/Purify.Core.git"
+			git pull "https://github.com/jpark730/Purify.Core.git"
 			cd ..
 		else
 			printf "\e[0;33mWarning: Skip updating Purify due to lack of network connection. \e[0m \n"
@@ -88,9 +88,10 @@ if [ "$(uname)" = "Darwin" ]; then
 	else
 		if [ "${isGitHubAvailable}" = true -a "${isNetworkAvailable}" = true ]; then
 			printf "\e[0;32mDownloading Purify.\e[0m \n"
+			printf "$(pwd)/Purify/Loader.cmake\n"
 			mkdir Purify
 			chflags hidden Purify
-			git clone "https://github.com/fpark12/Purify.Core.git" Purify
+			git clone "https://github.com/jpark730/Purify.Core.git" Purify
 			
 			if [ -d "$purify" ]; then
 				printf "\e[0;32mDownload complete: Purify.\e[0m \n"
