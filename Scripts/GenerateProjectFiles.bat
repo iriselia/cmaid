@@ -4,42 +4,42 @@ pushd %~dp0\..
 
 rem ## Find Visual Studio
 :FindVS2019
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 16
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2017
 set CMakeArg="Visual Studio 16 2019"
 goto ReadyToBuild
 :FindVS2017
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 15
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2015
 set CMakeArg="Visual Studio 15 2017 Win64"
 goto ReadyToBuild
 :FindVS2015
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 14
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2013
 set CMakeArg="Visual Studio 14 2015 Win64"
 goto ReadyToBuild
 :FindVS2013
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 12
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2012
 set CMakeArg="Visual Studio 12 2013 Win64"
 goto ReadyToBuild
 :FindVS2012
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 11
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2010
 set CMakeArg="Visual Studio 11 2012 Win64"
 goto ReadyToBuild
 :FindVS2010
-pushd .\Purify\Misc
+pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 10
 popd
 if "%VsComnToolsPath%" == "" goto Error_MissingVisualStudio
