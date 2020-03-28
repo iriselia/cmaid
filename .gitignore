@@ -11,9 +11,8 @@
 !*.cpp
 !*.c++
 !*.cxx
-!*.cpp.template
 !*.h
-!*.h.template
+!*.template
 !*.pch.h
 !*.ipp
 !*.hpp
