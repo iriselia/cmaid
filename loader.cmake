@@ -1,10 +1,10 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.0 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmaid")
 
-include( scripts/Detail/Utils )
-include( scripts/Detail/SetOutputDirectories )
-include( scripts/Detail/CreateProject )
-include( scripts/Detail/CreateBuild )
+include( scripts/Utils )
+include( scripts/SetOutputDirectories )
+include( scripts/CreateProject )
+include( scripts/CreateBuild )
 
-include( scripts/Detail/DotNetReferences )
+include( scripts/DotNetReferences )

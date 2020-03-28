@@ -90,7 +90,7 @@ cscript /nologo %SCRIPT%
 del %SCRIPT%
 
 :RemoveAllBuild
-1>NUL 2>NUL "%CMakePath%" -P "./cmaid/scripts/detail/RemoveAllBuild.cmake"
+1>NUL 2>NUL "%CMakePath%" -P "./cmaid/scripts/RemoveAllBuild.cmake"
 
 rem ## Finish up
 goto GenerateSuccess
