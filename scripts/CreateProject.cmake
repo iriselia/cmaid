@@ -21,10 +21,9 @@ MACRO(create_project mode defines includes links)
 	endif()
 
 
-	GetIncludeProjectsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_INCLUDE_PROJS)
-	GetLinkLibsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_LINK_LIBS)
-	#set(${PROJECT_NAME}_RECURSIVE_INCLUDE_PROJS "${${PROJECT_NAME}_RECURSIVE_INCLUDE_PROJS}")
-	set(${PROJECT_NAME}_RECURSIVE_INCLUDE_PROJS "${${PROJECT_NAME}_RECURSIVE_LINK_LIBS}")
+	GetIncludeProjectsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_INCLUDES)
+	GetLinkLibsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_LINKS)
+	set(${PROJECT_NAME}_RECURSIVE_INCLUDES "${${PROJECT_NAME}_RECURSIVE_INCLUDES}")
 
 
 	#----- The follow code will only be executed if build project is being run a second time -----
@@ -56,7 +55,7 @@ MACRO(create_project mode defines includes links)
 			list(APPEND includeDirs ${${PROJECT_NAME}_INCLUDE_DIRS} )
 		endif()
 
-		foreach(currentName ${${PROJECT_NAME}_RECURSIVE_INCLUDE_PROJS})
+		foreach(currentName ${${PROJECT_NAME}_RECURSIVE_INCLUDES})
 			# if exists, it is either a full path or a rel path, like c:/github/project/library/libabcd
 			if(IS_DIRECTORY ${currentName})
 				if(NOT IS_ABSOLUTE ${currentName})
@@ -93,7 +92,7 @@ MACRO(create_project mode defines includes links)
 		ENDFOREACH(currentName ${includes})
 
 		# Resolve link libraries. Link entry can be a file or a project name
-		foreach(linkEntry ${${PROJECT_NAME}_RECURSIVE_LINK_LIBS})
+		foreach(linkEntry ${${PROJECT_NAME}_RECURSIVE_LINKS})
 			# If link entry is a file
 			if(EXISTS ${linkEntry})
 				list(APPEND linkLibs ${linkEntry})
@@ -112,8 +111,8 @@ MACRO(create_project mode defines includes links)
 
 		#list(APPEND ${PROJECT_NAME}_ALL_INCLUDE_DIRS ${includeDirs})
 		list(APPEND includeDirs ${${PROJECT_NAME}_SOURCE_DIR})
-		unset(${PROJECT_NAME}_RECURSIVE_INCLUDE_DIRS CACHE)
-		set(${PROJECT_NAME}_RECURSIVE_INCLUDE_DIRS "${includeDirs}" CACHE STRING "")
+		unset(${PROJECT_NAME}_RECURSIVE_INCLUDES CACHE)
+		set(${PROJECT_NAME}_RECURSIVE_INCLUDES "${includeDirs}" CACHE STRING "")
 
 		# Add links
 		GeneratePrecompiledHeader()
