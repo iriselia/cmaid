@@ -15,7 +15,9 @@ function(create_source_group sourceGroupName relativeSourcePath sourceFiles)
 		else()
 			get_filename_component(fileExtension ${currentSourceFile} EXT)
 			if(fileExtension STREQUAL ".pb.cc" OR fileExtension STREQUAL ".pb.h" OR fileExtension STREQUAL ".proto")
-			SOURCE_GROUP("Proto Files" FILES ${currentSourceFile})
+				SOURCE_GROUP("Proto Files" FILES ${currentSourceFile})
+			else()
+				SOURCE_GROUP("" FILES ${currentSourceFile})
 			endif()
 		endif(NOT folder STREQUAL "")
 	ENDFOREACH(currentSourceFile ${sourceFiles})
@@ -103,11 +105,11 @@ macro(GeneratePrecompiledHeader)
 		if(generatedHeaderContent)
 			#------ Create Auto-Include Header ------
 			#if( NOT ${PRECOMPILED_HEADER} STREQUAL "")
-			set(generatedHeaderFullName "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.h")
+			set(generatedHeaderFullName "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.generated.pch.h")
 			if( NOT ${PROJECT_NAME}_CPP_SRC STREQUAL "" )
-				set(generatedSourceFullName "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.cpp")
+				set(generatedSourceFullName "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.generated.pch.cpp")
 			else()
-				set(generatedSourceFullName "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.c")
+				set(generatedSourceFullName "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.generated.pch.c")
 			endif()
 			set(generatedHeaderHeader "")
 			set(generatedSourceContent "")
@@ -171,7 +173,7 @@ macro(GeneratePrecompiledHeader)
 		
 
 		##else( NOT ${PRECOMPILED_HEADER} STREQUAL "")
-		##	file(WRITE "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pub.h" )
+		##	file(WRITE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.generated.pub.h" )
 		##endif()
 		
 endmacro()
@@ -242,6 +244,8 @@ MACRO(forced_include_public compileFlags includeProjs outString)
 	endif()
 	#string(CONCAT ${outString} ${${outString}} "\n")
 ENDMACRO()
+
+#[[
 
 #
 #
@@ -324,6 +328,7 @@ MACRO(forced_include_public_recursive compileFlags includeProj outString)
 	#message("INCLUDES: ${${includeProj}_INCLUDES}")
 
 ENDMACRO()
+#]]
 
 #[[
 MACRO(traverse_project_includes includeProjs outProjects)
@@ -347,6 +352,7 @@ MACRO(traverse_project_includes includeProjs outProjects)
 ENDMACRO()
 #]]
 
+#[[
 MACRO(forced_include_recursive compileFlags includeProjs outString)
 	#if(includeProjs)
 	#	set(outProjects "")
@@ -359,6 +365,7 @@ MACRO(forced_include_recursive compileFlags includeProjs outString)
 	forced_include_protected(${compileFlags} "${includeProjs}" ${outString})
 	forced_include_public(${compileFlags} "${includeProjs}" ${outString})
 ENDMACRO()
+#]]
 
 MACRO(search_and_link_libraries libs)
 	foreach(proj ${PROJECT_NAMES})
@@ -399,58 +406,58 @@ ENDMACRO()
 #
 macro(ScanSourceFiles)
 		#file(GLOB ${PROJECT_NAME}_BATCH_SCRIPTS ${CMAKE_SOURCE_DIR}/*Generate*.bat)
-		file(GLOB_RECURSE ${PROJECT_NAME}_SRC
-			${${PROJECT_NAME}_SOURCE_DIR}/*.cxx ${${PROJECT_NAME}_SOURCE_DIR}/*.cpp ${${PROJECT_NAME}_SOURCE_DIR}/*.cc
-			${${PROJECT_NAME}_SOURCE_DIR}/*.c++ ${${PROJECT_NAME}_SOURCE_DIR}/*.c)
-		file(GLOB_RECURSE ${PROJECT_NAME}_CPP_SRC ${${PROJECT_NAME}_SOURCE_DIR}/*.cxx ${${PROJECT_NAME}_SOURCE_DIR}/*.cpp
-			${${PROJECT_NAME}_SOURCE_DIR}/*.cc ${${PROJECT_NAME}_SOURCE_DIR}/*.c++)
-		file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_SOURCE_DIR}/*.h ${${PROJECT_NAME}_SOURCE_DIR}/*.hpp ${${PROJECT_NAME}_SOURCE_DIR}/*.inl ${${PROJECT_NAME}_SOURCE_DIR}/*.ixx)
-		file(GLOB_RECURSE ${PROJECT_NAME}_PRECOMPILED_HEADER ${${PROJECT_NAME}_SOURCE_DIR}/*.pch.h)
-		file(GLOB_RECURSE ${PROJECT_NAME}_GENERATED_PRECOMPILED_HEADER ${${PROJECT_NAME}_BINARY_DIR}/*.pch.h)
+		file(GLOB_RECURSE PROJECT_SOURCE
+			${PROJECT_SOURCE_DIR}/*.cxx ${PROJECT_SOURCE_DIR}/*.cpp ${PROJECT_SOURCE_DIR}/*.cc ${PROJECT_SOURCE_DIR}/*.c++ ${PROJECT_SOURCE_DIR}/*.c)
+		file(GLOB_RECURSE PROJECT_CPP_SOURCE
+			${PROJECT_SOURCE_DIR}/*.cxx ${PROJECT_SOURCE_DIR}/*.cpp ${PROJECT_SOURCE_DIR}/*.cc ${PROJECT_SOURCE_DIR}/*.c++)
+		file(GLOB_RECURSE PROJECT_HEADERS
+			${PROJECT_SOURCE_DIR}/*.h ${PROJECT_SOURCE_DIR}/*.hpp ${PROJECT_SOURCE_DIR}/*.inl ${PROJECT_SOURCE_DIR}/*.ixx ${PROJECT_SOURCE_DIR}/*.ipp)
+		file(GLOB_RECURSE ${PROJECT_NAME}_PRECOMPILED_HEADER ${PROJECT_SOURCE_DIR}/*.pch.h)
+		file(GLOB_RECURSE ${PROJECT_NAME}_GENERATED_PRECOMPILED_HEADER ${PROJECT_BINARY_DIR}/*.pch.h)
 		
-		file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_SOURCE_DIR}/*.rc ${${PROJECT_NAME}_SOURCE_DIR}/*.r ${${PROJECT_NAME}_SOURCE_DIR}/*.resx)
-		# Todo: Add support for ${${PROJECT_NAME}_SOURCE_DIR}/*.capnp
-		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO ${${PROJECT_NAME}_SOURCE_DIR}/*.proto)
-		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO_SRC ${${PROJECT_NAME}_BINARY_DIR}/*.pb.cc)
-		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO_HEADERS ${${PROJECT_NAME}_BINARY_DIR}/*.pb.h)
+		file(GLOB_RECURSE ${PROJECT_NAME}_RESOURCES ${PROJECT_SOURCE_DIR}/*.rc ${PROJECT_SOURCE_DIR}/*.r ${PROJECT_SOURCE_DIR}/*.resx)
+		# Todo: Add support for ${PROJECT_SOURCE_DIR}/*.capnp
+		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO ${PROJECT_SOURCE_DIR}/*.proto)
+		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO_SRC ${PROJECT_BINARY_DIR}/*.pb.cc)
+		file(GLOB_RECURSE ${PROJECT_NAME}_PROTO_HEADERS ${PROJECT_BINARY_DIR}/*.pb.h)
 
-		file(GLOB_RECURSE ${PROJECT_NAME}_MISC ${${PROJECT_NAME}_SOURCE_DIR}/*.l ${${PROJECT_NAME}_SOURCE_DIR}/*.y)
-		file(GLOB_RECURSE ${PROJECT_NAME}_CONFIG ${${PROJECT_NAME}_SOURCE_DIR}/*.ini)
+		file(GLOB_RECURSE ${PROJECT_NAME}_MISC ${PROJECT_SOURCE_DIR}/*.l ${PROJECT_SOURCE_DIR}/*.y)
+		file(GLOB_RECURSE ${PROJECT_NAME}_CONFIG ${PROJECT_SOURCE_DIR}/*.ini)
 		file(GLOB_RECURSE ${PROJECT_NAME}_SHADERS
-			${${PROJECT_NAME}_SOURCE_DIR}/*.vert
-			${${PROJECT_NAME}_SOURCE_DIR}/*.frag
-			${${PROJECT_NAME}_SOURCE_DIR}/*.geom
-			${${PROJECT_NAME}_SOURCE_DIR}/*.ctrl
-			${${PROJECT_NAME}_SOURCE_DIR}/*.eval
-			${${PROJECT_NAME}_SOURCE_DIR}/*.glsl)
+			${PROJECT_SOURCE_DIR}/*.vert
+			${PROJECT_SOURCE_DIR}/*.frag
+			${PROJECT_SOURCE_DIR}/*.geom
+			${PROJECT_SOURCE_DIR}/*.ctrl
+			${PROJECT_SOURCE_DIR}/*.eval
+			${PROJECT_SOURCE_DIR}/*.glsl)
 
-		if( NOT ${PROJECT_NAME}_HEADERS STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_HEADERS)
+		if( PROJECT_HEADERS )
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" PROJECT_HEADERS)
 		endif()
-		if( NOT ${PROJECT_NAME}_SRC STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_SRC)
+		if( PROJECT_SOURCE )
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" PROJECT_SOURCE)
 		endif()
-		if( NOT ${PROJECT_NAME}_CPP_SRC STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_CPP_SRC)
+		if( PROJECT_SOURCE_CPP )
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" PROJECT_SOURCE_CPP)
 		endif()
 
 		# Append proto source files
-		list(APPEND ${PROJECT_NAME}_SRC ${${PROJECT_NAME}_PROTO_SRC})
-		list(APPEND ${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_PROTO_HEADERS})
+		list(APPEND PROJECT_SOURCE ${${PROJECT_NAME}_PROTO_SRC})
+		list(APPEND PROJECT_HEADERS ${${PROJECT_NAME}_PROTO_HEADERS})
 
 		# Only cache after source files from various other sources are merged together.
 		unset(${PROJECT_NAME}_SRC CACHE)
 		unset(${PROJECT_NAME}_CPP_SRC CACHE)
 		unset(${PROJECT_NAME}_HEADERS CACHE)
-		set( ${PROJECT_NAME}_SRC "${${PROJECT_NAME}_SRC}" CACHE STRING "" )
-		set( ${PROJECT_NAME}_CPP_SRC "${${PROJECT_NAME}_CPP_SRC}" CACHE STRING "" )
-		set( ${PROJECT_NAME}_HEADERS "${${PROJECT_NAME}_HEADERS}" CACHE STRING "" )
+		set( ${PROJECT_NAME}_SRC "${PROJECT_SOURCE}" CACHE STRING "" )
+		set( ${PROJECT_NAME}_CPP_SRC "${PROJECT_CPP_SOURCE}" CACHE STRING "" )
+		set( ${PROJECT_NAME}_HEADERS "${PROJECT_HEADERS}" CACHE STRING "" )
 
 
 		if( NOT ${PROJECT_NAME}_RESOURCES STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_RESOURCES)
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" ${PROJECT_NAME}_RESOURCES)
 			foreach(RESOURCE ${${PROJECT_NAME}_RESOURCES})
-				FILE(RELATIVE_PATH folder ${${PROJECT_NAME}_SOURCE_DIR} ${RESOURCE})
+				FILE(RELATIVE_PATH folder ${PROJECT_SOURCE_DIR} ${RESOURCE})
 				string(FIND ${folder} "/" result)
 				if(${result} STREQUAL "-1")
 					SOURCE_GROUP("Resource Files" FILES ${RESOURCES})
@@ -459,19 +466,19 @@ macro(ScanSourceFiles)
 		endif()
 
 		if( NOT ${PROJECT_NAME}_PROTO_SRC STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_BINARY_DIR}/" ${PROJECT_NAME}_PROTO_SRC)
+			create_source_group("" "${PROJECT_BINARY_DIR}/" ${PROJECT_NAME}_PROTO_SRC)
 		endif()
 		if( NOT ${PROJECT_NAME}_PROTO_HEADERS STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_BINARY_DIR}/" ${PROJECT_NAME}_PROTO_HEADERS)
+			create_source_group("" "${PROJECT_BINARY_DIR}/" ${PROJECT_NAME}_PROTO_HEADERS)
 		endif()
 		if( NOT ${PROJECT_NAME}_PROTO STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_PROTO)
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" ${PROJECT_NAME}_PROTO)
 		endif()
 
 		LIST(APPEND ${PROJECT_NAME}_RESOURCES ${${PROJECT_NAME}_CONFIG})
 
 		if( NOT ${PROJECT_NAME}_CONFIG STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_CONFIG)
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" ${PROJECT_NAME}_CONFIG)
 		endif()
 
 		if( NOT ${PROJECT_NAME}_BATCH_SCRIPTS STREQUAL "" )
@@ -479,24 +486,24 @@ macro(ScanSourceFiles)
 		endif()
 
 		if( NOT ${PROJECT_NAME}_MISC STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_MISC)
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" ${PROJECT_NAME}_MISC)
 		endif()
 
 		LIST(APPEND ${PROJECT_NAME}_MISC ${${PROJECT_NAME}_PROTO})
 		LIST(APPEND ${PROJECT_NAME}_MISC ${${PROJECT_NAME}_BATCH_SCRIPTS})
 
-		if( (${PROJECT_NAME}_SRC STREQUAL "") )
+		if( (PROJECT_SOURCE STREQUAL "") )
 			#message(STATUS "Project contains no source files or only header files, a placeholder C++ source file was created to set compiler language.")
-			if(NOT EXISTS "${${PROJECT_NAME}_BINARY_DIR}/Placeholder.cpp")
-				file(WRITE "${${PROJECT_NAME}_BINARY_DIR}/Placeholder.cpp" "// Auto Generated Source File.\n// Project contains no source files or only header files, a placeholder C++ source file was created to set compiler language.")
+			if(NOT EXISTS "${PROJECT_BINARY_DIR}/Placeholder.cpp")
+				file(WRITE "${PROJECT_BINARY_DIR}/Placeholder.cpp" "// Auto Generated Source File.\n// Project contains no source files or only header files, a placeholder C++ source file was created to set compiler language.")
 			endif()
-			LIST(APPEND ${PROJECT_NAME}_SRC "${${PROJECT_NAME}_BINARY_DIR}/Placeholder.cpp")
+			LIST(APPEND ${PROJECT_NAME}_SRC "${PROJECT_BINARY_DIR}/Placeholder.cpp")
 			#message(FATAL_ERROR "Please insert at least one source file to use the CMakeLists.txt.")
 		endif()
 
 
 		if( NOT ${PROJECT_NAME}_SHADERS STREQUAL "" )
-			create_source_group("" "${${PROJECT_NAME}_SOURCE_DIR}/" ${PROJECT_NAME}_SHADERS)
+			create_source_group("" "${PROJECT_SOURCE_DIR}/" ${PROJECT_NAME}_SHADERS)
 		endif()
 endmacro()
 
@@ -536,18 +543,17 @@ endmacro()
 
 # macro needed for this because of recursion
 macro(GetIncludeProjectsRecursive inString outString)
-	#only iterate if it's not a directory (which probably means it's a target)
+	#only iterate if it's not a directory or file(which probably means it's a target)
 	if(NOT EXISTS ${inString})
 		foreach(include ${${inString}_INCLUDES})
-			list(FIND ${outString} ${include} index)
-			if(index EQUAL -1)
-				#message("${PROJECT_NAME} B")
-				GetIncludeProjectsRecursive(${include} ${outString})
-				list(APPEND ${outString} ${include})
+			if(NOT EXISTS ${include})
+				list(FIND ${outString} ${include} index)
+				if(index EQUAL -1)
+					message("${PROJECT_NAME} ${include}")
+					GetIncludeProjectsRecursive(${include} ${outString})
+					list(APPEND ${outString} ${include})
+				endif()
 			endif()
-			#only append if it's not a directory (which probably means it's a target)
-			#if(NOT EXISTS ${include})
-			#endif()
 		endforeach()
 	endif()
 endmacro()

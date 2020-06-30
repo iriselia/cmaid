@@ -2,132 +2,209 @@ cmake_minimum_required( VERSION 3.0 )
 cmake_policy(SET CMP0054 NEW)
 include(ProcessorCount)
 
-
 MACRO(create_project mode defines includes links)
+ENDMACRO()
 
-	string(TOUPPER "${mode}" mode_capped)
+MACRO(cmaid_project)
 
-	# Create project based on directory name
-	get_folder_name(${${PROJECT_NAME}_SOURCE_DIR} PROJECT_NAME)
+	set(options) #set(options OPTIONAL FAST)
+	set(oneValueArgs CONFIGURATION NAME) #set(oneValueArgs DESTINATION RENAME)
+	set(multiValueArgs DEFINE INCLUDE EXCLUDE LINK)
+	cmake_parse_arguments(PROJECT_ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+	string(TOUPPER "${PROJECT_ARG_CONFIGURATION}" PROJECT_CONFIGURATION)
+	set(PROJECT_DEFINES "${PROJECT_ARG_DEFINE}")
+	set(PROJECT_INCLUDES "${PROJECT_ARG_INCLUDE}")
+	set(PROJECT_EXCLUDES "${PROJECT_ARG_EXCLUDE}")
+
+	# Restore default name if no new name is specified.
+	if(PROJECT_ARG_NAME)
+		set(PROJECT_NAME ${PROJECT_ARG_NAME})
+	endif()
+
+	# Cache args for resolving project dependencies
 	if(${PROJECT_NAME}_INITIALIZED)
 		project(${PROJECT_NAME})
 	else()
-		set(${PROJECT_NAME}_DEFINES "${${defines}}" CACHE STRING "" FORCE)
-		set(${PROJECT_NAME}_INCLUDES "${${includes}}" CACHE STRING "" FORCE)
-		set(${PROJECT_NAME}_LINKS "${${links}}" CACHE STRING "" FORCE)
-		set(${PROJECT_NAME}_MODE "${mode_capped}" CACHE STRING "" FORCE)
-		set(${PROJECT_NAME}_BUILD_TYPE "${PROJECT_NAME}_IS_${mode_capped}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_DEFINES "${PROJECT_ARG_DEFINE}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_INCLUDES "${PROJECT_ARG_INCLUDE}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_EXCLUDES "${PROJECT_ARG_EXCLUDE}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_LINKS "${PROJECT_ARG_LINK}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_CONFIGURATION "${PROJECT_ARG_CONFIGURATION}" CACHE STRING "" FORCE)
+		set(${PROJECT_NAME}_BUILD_TYPE "${PROJECT_NAME}_IS_${PROJECT_ARG_CONFIGURATION}" CACHE STRING "" FORCE)
 		set(${PROJECT_NAME}_ID "${PROJECT_COUNT}" CACHE STRING "" FORCE)
 	endif()
 
 
 	GetIncludeProjectsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_INCLUDES)
 	GetLinkLibsRecursive(${PROJECT_NAME} ${PROJECT_NAME}_RECURSIVE_LINKS)
-	set(${PROJECT_NAME}_RECURSIVE_INCLUDES "${${PROJECT_NAME}_RECURSIVE_INCLUDES}")
 
 
 	#----- The follow code will only be executed if build project is being run a second time -----
 	if( ${PROJECT_NAME}_INITIALIZED )
 
 		#----- Add Preprocessor Definitions -----
-		foreach(macro ${${defines}})
+		foreach(macro ${PROJECT_DEFINES})
 			add_definitions("-D${macro}")
 		endforeach()
 		#----- Add Project Name -----
 		add_definitions("-D_PROJECT_NAME=\"${PROJECT_NAME}\"")
 		add_definitions("-D_PROJECT_ID=${${PROJECT_NAME}_ID}")
 
+		# Most important step, scan for source files and headers recursively
 		ScanSourceFiles() #----- Utils.cmake
 
-		#------ INCLUDE DIRS AND LIBS -----
+		#------ EXCLUDES and INCLUDES -----
 		# Process include list, an element could be a list of dirs or a target name
-		set(includeDirs "")
-		set(linkLibs "")
+		set(PROJECT_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}")
+		set(PROJECT_LINK_LIBS "")
 		set(includeProjs "")
 
-		list(APPEND includeDirs ${${PROJECT_NAME}_PUBLIC_INCLUDE_DIRS})
-		list(APPEND includeDirs ${${PROJECT_NAME}_PROTECTED_INCLUDE_DIRS})
-		list(APPEND includeDirs ${${PROJECT_NAME}_PRIVATE_INCLUDE_DIRS})
-		list(APPEND includeDirs ${${PROJECT_NAME}_PRECOMPILED_INCLUDE_DIRS})
+		# Excludes
+		foreach(excluded_entry ${PROJECT_EXCLUDES})
+			# is directory
+			if(IS_DIRECTORY ${excluded_entry})
+			# is file
+			elseif(EXISTS ${excluded_entry})
+			# something else, regex?
+			else()
+				list(FILTER PROJECT_SOURCE EXCLUDE REGEX "${excluded_entry}")
+				list(FILTER PROJECT_SOURCE_CPP EXCLUDE REGEX "${excluded_entry}")
+				list(FILTER PROJECT_HEADERS EXCLUDE REGEX "${excluded_entry}")
+			endif()
+		endforeach()
+
+		list(APPEND PROJECT_INCLUDE_DIRS ${${PROJECT_NAME}_PUBLIC_INCLUDE_DIRS})
+		list(APPEND PROJECT_INCLUDE_DIRS ${${PROJECT_NAME}_PROTECTED_INCLUDE_DIRS})
+		list(APPEND PROJECT_INCLUDE_DIRS ${${PROJECT_NAME}_PRIVATE_INCLUDE_DIRS})
+		list(APPEND PROJECT_INCLUDE_DIRS ${${PROJECT_NAME}_PRECOMPILED_INCLUDE_DIRS})
 		# make the project completely public if it does not contain a .pri.h
 		if( "${${PROJECT_NAME}_PRIVATE_INCLUDE_FILES}" STREQUAL "")
 			#message("${PROJECT_NAME} has no file, ${${currentName}_ALL_INCLUDE_DIRS}")
-			list(APPEND includeDirs ${${PROJECT_NAME}_INCLUDE_DIRS} )
+			list(APPEND PROJECT_INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDE_DIRS} )
 		endif()
 
-		foreach(currentName ${${PROJECT_NAME}_RECURSIVE_INCLUDES})
+		foreach(include_entry ${${PROJECT_NAME}_RECURSIVE_INCLUDES})
 			# if exists, it is either a full path or a rel path, like c:/github/project/library/libabcd
-			if(IS_DIRECTORY ${currentName})
-				if(NOT IS_ABSOLUTE ${currentName})
-					# or if it is a rel path to a folder within the cmake source dir,
-					# e.g. /3rdparty/libabcd
-					list(APPEND includeDirs ${CMAKE_SOURCE_DIR}/${currentName})
+			if(EXISTS ${include_entry})
+				if(IS_DIRECTORY ${include_entry})
+					if(NOT IS_ABSOLUTE ${include_entry})
+						# or if it is a rel path to a folder within the cmake source dir,
+						# e.g. /3rdparty/libabcd
+						list(APPEND PROJECT_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/${include_entry})
+					else()
+						list(APPEND PROJECT_INCLUDE_DIRS ${include_entry})
+					endif()
+				# probably a file, in which case we link it against our current project or include as a source file
 				else()
-					list(APPEND includeDirs ${currentName})
-				endif()
-			else()
-				# if doesn't exist, it is a target, we retrieve the include dirs by appending _INCLUDE_DIRS to its name
-				list(APPEND includeDirs ${${currentName}_PUBLIC_INCLUDE_DIRS})
-				list(APPEND includeDirs ${${currentName}_PROTECTED_INCLUDE_DIRS})
-				list(APPEND includeDirs ${${currentName}_PRIVATE_INCLUDE_DIRS})
-				list(APPEND includeDirs ${${currentName}_PRECOMPILED_INCLUDE_DIRS})
-				#message("${currentName}_PRECOMPILED_INCLUDE_FILES: ${${currentName}_PRECOMPILED_INCLUDE_FILES}")
+					set(header_extensions ".h" ".hpp" ".inl" ".ixx" ".ipp")
+					set(source_extensions ".cxx" ".cpp" ".cc" ".c++" ".c")
+					set(source_cpp_extensions ".cxx" ".cpp" ".cc" ".c++")
+					set(link_lib_extensions ".lib")
+			
+					get_filename_component(entry_ext "${include_entry}" LAST_EXT)
 
-				# include the bare minimum
-				list(APPEND includeDirs ${${currentName}_SOURCE_DIR} )
-				# make the project completely public if it does not contain a .pri.h
-				if( "${${currentName}_PRIVATE_INCLUDE_FILES}" STREQUAL "")
-					#message("${currentName} has no file, ${${currentName}_ALL_INCLUDE_DIRS}")
-					list(APPEND includeDirs ${${currentName}_INCLUDE_DIRS} )
-				else()
+					foreach(header_extension ${header_extensions})
+						if(${entry_ext} STREQUAL ${header_extension})
+							list(APPEND PROJECT_HEADERS "${include_entry}")
+						endif()
+					endforeach()
+
+					foreach(source_extension ${source_extensions})
+						if(${entry_ext} STREQUAL ${source_extension})
+							list(APPEND PROJECT_SOURCE "${include_entry}")
+						endif()
+					endforeach()
+
+					foreach(source_cpp_extension ${source_cpp_extensions})
+						if(${entry_ext} STREQUAL ${source_cpp_extension})
+							list(APPEND PROJECT_SOURCE_CPP "${include_entry}")
+						endif()
+					endforeach()
+
+					foreach(link_lib_extension ${link_lib_extensions})
+						if(${entry_ext} STREQUAL ${link_lib_extensions})
+							list(APPEND PROJECT_SOURCE_CPP "${include_entry}")
+						endif()
+					endforeach()
+
+					list(APPEND PROJECT_LINK_LIBS ${include_entry})
 				endif()
-				#message("${currentName} has : ${${currentName}_ALL_INCLUDE_DIRS} ")
-				foreach(define ${${currentName}_DEFINES})
-					add_definitions("-D${define}")
-				endforeach()
-				#list(APPEND includeDirs ${${currentName}_SOURCE_DIR})
-				list(APPEND includeDirs ${${currentName}_BINARY_DIR})
-				list(APPEND includeProjs ${currentName})
+			elseif(TARGET ${include_entry})
+					# if doesn't exist, it is a target, we retrieve the include dirs by appending _INCLUDE_DIRS to its name
+					list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_PUBLIC_INCLUDE_DIRS})
+					list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_PROTECTED_INCLUDE_DIRS})
+					list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_PRIVATE_INCLUDE_DIRS})
+					list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_PRECOMPILED_INCLUDE_DIRS})
+					#message("${include_entry}_PRECOMPILED_INCLUDE_FILES: ${${include_entry}_PRECOMPILED_INCLUDE_FILES}")
+
+					# include the bare minimum
+					list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_SOURCE_DIR} )
+					# make the project completely public if it does not contain a .pri.h
+					if( "${${include_entry}_PRIVATE_INCLUDE_FILES}" STREQUAL "")
+						#message("${include_entry} has no file, ${${include_entry}_ALL_INCLUDE_DIRS}")
+						list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_INCLUDE_DIRS} )
+					else()
+					endif()
+					#message("${include_entry} has : ${${include_entry}_ALL_INCLUDE_DIRS} ")
+					foreach(define ${${include_entry}_DEFINES})
+						add_definitions("-D${define}")
+					endforeach()
+					#list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_SOURCE_DIR})
+					#list(APPEND PROJECT_INCLUDE_DIRS ${${include_entry}_BINARY_DIR})
+					list(APPEND includeProjs ${include_entry})
+
+
+					# now link the target against our current project
+					foreach(current_build_config ${CMAKE_CONFIGURATION_TYPES})
+						GetTargetOutputExtension(${include_entry} ${include_entry}_output_extension)
+						if (${current_build_config} STREQUAL "Debug")
+							list(APPEND PROJECT_LINK_LIBS_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${include_entry}${CMAKE_DEBUG_POSTFIX}${${include_entry}_output_extension}")
+						else()
+							list(APPEND PROJECT_LINK_LIBS_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${include_entry}${${include_entry}_output_extension}")
+						endif()
+					endforeach()
 			endif()
-		ENDFOREACH(currentName ${includes})
+		ENDFOREACH(include_entry ${includes})
 
+		#[[
 		# Resolve link libraries. Link entry can be a lib file or a project name
 		foreach(linkEntry ${${PROJECT_NAME}_RECURSIVE_LINKS})
 			# If link entry is a file
 			if(EXISTS ${linkEntry})
-				list(APPEND linkLibs ${linkEntry})
+				list(APPEND PROJECT_LINK_LIBS ${linkEntry})
 			# Else if link entry is a project
 			elseif(TARGET ${linkEntry})
 				foreach(current_build_config ${CMAKE_CONFIGURATION_TYPES})
 					GetTargetOutputExtension(${linkEntry} ${linkEntry}_output_extension)
 					if (${current_build_config} STREQUAL "Debug")
-						list(APPEND linkLibs_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${linkEntry}${CMAKE_DEBUG_POSTFIX}${${linkEntry}_output_extension}")
+						list(APPEND PROJECT_LINK_LIBS_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${linkEntry}${CMAKE_DEBUG_POSTFIX}${${linkEntry}_output_extension}")
 					else()
-						list(APPEND linkLibs_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${linkEntry}${${linkEntry}_output_extension}")
+						list(APPEND PROJECT_LINK_LIBS_${current_build_config} "${CMAKE_BINARY_DIR}/${current_build_config}/${linkEntry}${${linkEntry}_output_extension}")
 					endif()
 				endforeach()
 			endif()
 		endforeach()
+		#]]
 
-		#list(APPEND ${PROJECT_NAME}_ALL_INCLUDE_DIRS ${includeDirs})
-		list(APPEND includeDirs ${${PROJECT_NAME}_SOURCE_DIR})
+		#list(APPEND ${PROJECT_NAME}_ALL_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
 		unset(${PROJECT_NAME}_RECURSIVE_INCLUDES CACHE)
-		set(${PROJECT_NAME}_RECURSIVE_INCLUDES "${includeDirs}" CACHE STRING "")
+		set(${PROJECT_NAME}_RECURSIVE_INCLUDES "${PROJECT_INCLUDE_DIRS}" CACHE STRING "")
 
 		# Add links
 		GeneratePrecompiledHeader()
 
 		# Force C++ if there's any cpp file
-		if(${PROJECT_NAME}_CPP_SRC)
-			set_source_files_properties(${${PROJECT_NAME}_SRC} PROPERTIES LANGUAGE CXX)
+		if(PROJECT_CPP_SOURCE)
+			set_source_files_properties(${PROJECT_SOURCE} PROPERTIES LANGUAGE CXX)
 		else()
-			set_source_files_properties(${${PROJECT_NAME}_SRC} PROPERTIES LANGUAGE C)
+			set_source_files_properties(${PROJECT_SOURCE} PROPERTIES LANGUAGE C)
 		endif()
 
 		if(XCODE)
-			if( ${PROJECT_NAME}_SRC STREQUAL "")
-				file(WRITE ${${PROJECT_NAME}_BINARY_DIR}/stub.c "")
-				list(APPEND ${PROJECT_NAME}_SRC ${${PROJECT_NAME}_BINARY_DIR}/stub.c)
+			if( PROJECT_SOURCE STREQUAL "")
+				file(WRITE ${${PROJECT_BINARY_DIR}/stub.c "")
+				list(APPEND PROJECT_SOURCE ${${PROJECT_BINARY_DIR}/stub.c)
 			endif()
 		endif()		
 		#----- CREATE TARGET -----
@@ -137,12 +214,12 @@ MACRO(create_project mode defines includes links)
 		add_definitions("-DCURRENT_PROJECT_ID=${PROJECT_COUNT}")
 		add_definitions("-D${${PROJECT_NAME}_BUILD_TYPE}")
 
-		if(${${PROJECT_NAME}_MODE} STREQUAL "STATIC")
-			add_library (${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+		if(${PROJECT_CONFIGURATION} STREQUAL "STATIC")
+			add_library (${PROJECT_NAME} STATIC ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
 			add_definitions("-DCOMPILING_STATIC")
-		elseif(${${PROJECT_NAME}_MODE} STREQUAL "DYNAMIC" OR ${${PROJECT_NAME}_MODE} STREQUAL "SHARED" )
+		elseif(${PROJECT_CONFIGURATION} STREQUAL "DYNAMIC" OR ${PROJECT_CONFIGURATION} STREQUAL "SHARED" )
 			#message("its: ${PROJECT_NAME} with ${${PROJECT_NAME}_HEADERS}")
-			add_library (${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+			add_library (${PROJECT_NAME} SHARED ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
 			add_definitions("-D${${PROJECT_NAME}_BUILD_TYPE}")
 			add_definitions("-DCOMPILING_SHARED")
 			#add_definitions("-D${PROJECT_NAME}_IS_DYNAMIC" "-D${PROJECT_NAME}_IS_SHARED" )
@@ -151,9 +228,9 @@ MACRO(create_project mode defines includes links)
 			elseif(MACOS)
 				set(projectExtension ".dylib")
 			endif()
-		elseif(${${PROJECT_NAME}_MODE} STREQUAL "MODULE" )
+		elseif(${PROJECT_CONFIGURATION} STREQUAL "MODULE" )
 			#message("its: ${PROJECT_NAME} with ${${PROJECT_NAME}_HEADERS}")
-			add_library (${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+			add_library (${PROJECT_NAME} MODULE ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
 			add_definitions("-D${${PROJECT_NAME}_BUILD_TYPE}")
 			add_definitions("-DCOMPILING_MODULE")
 			##add_definitions("-D${PROJECT_NAME}_IS_DYNAMIC" "-D${PROJECT_NAME}_IS_MODULE")
@@ -163,15 +240,15 @@ MACRO(create_project mode defines includes links)
 			elseif(MACOS)
 				set(projectExtension ".dylib")
 			endif()
-		elseif(${${PROJECT_NAME}_MODE} STREQUAL "CONSOLE")
-			add_executable (${PROJECT_NAME} ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_SHADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+		elseif(${PROJECT_CONFIGURATION} STREQUAL "CONSOLE")
+			add_executable (${PROJECT_NAME} ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_SHADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
 			if(MSVC)
 				set(projectExtension ".exe")
 			elseif(MACOS)
 				set(projectExtension "")
 			endif()
-		elseif(${${PROJECT_NAME}_MODE} STREQUAL "WIN32")
-			add_executable (${PROJECT_NAME} WIN32 ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_SHADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+		elseif(${PROJECT_CONFIGURATION} STREQUAL "WIN32")
+			add_executable (${PROJECT_NAME} WIN32 ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_SHADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
 			if(MSVC)
 				set(projectExtension ".exe")
 			elseif(MACOS)
@@ -198,10 +275,12 @@ MACRO(create_project mode defines includes links)
 		#set_target_properties(${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 		#----- Handle includes -----
-		if(includeDirs)
-			list(REMOVE_DUPLICATES includeDirs)
+		if(PROJECT_INCLUDE_DIRS)
+			list(REMOVE_DUPLICATES PROJECT_INCLUDE_DIRS)
 		endif()
-		target_include_directories(${PROJECT_NAME} PUBLIC "${includeDirs}" )
+		message("111111111${PROJECT_INCLUDE_DIRS}")
+
+		target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_INCLUDE_DIRS}" )
 
 		#----- Handle Links -----
 		search_and_link_libraries("${${links}}")
@@ -232,19 +311,19 @@ MACRO(create_project mode defines includes links)
 
 		# Store linker flags as macro
 		if(MSVC)
-			if(${${PROJECT_NAME}_MODE} STREQUAL "STATIC")
+			if(${PROJECT_CONFIGURATION} STREQUAL "STATIC")
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Debug "${CMAKE_STATIC_LINKER_FLAGS}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Release "${CMAKE_STATIC_LINKER_FLAGS}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_MinSizeRel "${CMAKE_STATIC_LINKER_FLAGS}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_RelWithDebInfo "${CMAKE_STATIC_LINKER_FLAGS}" )
-			elseif(${${PROJECT_NAME}_MODE} STREQUAL "DYNAMIC" OR ${${PROJECT_NAME}_MODE} STREQUAL "SHARED" OR ${${PROJECT_NAME}_MODE} STREQUAL "MODULE" )
+			elseif(${PROJECT_CONFIGURATION} STREQUAL "DYNAMIC" OR ${PROJECT_CONFIGURATION} STREQUAL "SHARED" OR ${PROJECT_CONFIGURATION} STREQUAL "MODULE" )
 
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Debug "${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Release "${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_MinSizeRel "${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_RelWithDebInfo "${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO}" )
 
-			elseif(${${PROJECT_NAME}_MODE} STREQUAL "CONSOLE" OR ${${PROJECT_NAME}_MODE} STREQUAL "WIN32")
+			elseif(${PROJECT_CONFIGURATION} STREQUAL "CONSOLE" OR ${PROJECT_CONFIGURATION} STREQUAL "WIN32")
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Debug "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_Release "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}" )
 				string(REPLACE " " "\\\",\\\"" linkerFlags_MinSizeRel "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}" )
@@ -271,27 +350,27 @@ MACRO(create_project mode defines includes links)
 
 		# Store include dirs as macro
 		if( MSVC )		
-			string(REPLACE ";" "\\\",\\\"" includeDirs "${includeDirs}" )
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_INCLUDE_DIRS={\\\"${includeDirs}\\\"}")
+			string(REPLACE ";" "\\\",\\\"" PROJECT_INCLUDE_DIRS "${PROJECT_INCLUDE_DIRS}" )
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_INCLUDE_DIRS={\\\"${PROJECT_INCLUDE_DIRS}\\\"}")
 		endif()
 
 		# Store link libs as macro
 		if(MSVC)
-			string(REPLACE ";" "\\\",\\\"" linkLibs_Debug "${linkLibs_Debug}" )
-			string(REPLACE ";" "\\\",\\\"" linkLibs_Release "${linkLibs_Release}" )
-			string(REPLACE ";" "\\\",\\\"" linkLibs_MinSizeRel "${linkLibs_MinSizeRel}" )
-			string(REPLACE ";" "\\\",\\\"" linkLibs_RelWithDebInfo "${linkLibs_RelWithDebInfo}" )
-			#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_LINK_LIBS=\"${linkLibs_Debug}\"")
-			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_LINK_LIBS={\\\"${linkLibs_Debug}\\\"}" )
-			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /D_LINK_LIBS={\\\"${linkLibs_Release}\\\"}" )
-			set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /D_LINK_LIBS={\\\"${linkLibs_MinSizeRel}\\\"}" )
-			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /D_LINK_LIBS={\\\"${linkLibs_RelWithDebInfo}\\\"}" )
+			string(REPLACE ";" "\\\",\\\"" PROJECT_LINK_LIBS_Debug "${PROJECT_LINK_LIBS_Debug}" )
+			string(REPLACE ";" "\\\",\\\"" PROJECT_LINK_LIBS_Release "${PROJECT_LINK_LIBS_Release}" )
+			string(REPLACE ";" "\\\",\\\"" PROJECT_LINK_LIBS_MinSizeRel "${PROJECT_LINK_LIBS_MinSizeRel}" )
+			string(REPLACE ";" "\\\",\\\"" PROJECT_LINK_LIBS_RelWithDebInfo "${PROJECT_LINK_LIBS_RelWithDebInfo}" )
+			#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_LINK_LIBS=\"${PROJECT_LINK_LIBS_Debug}\"")
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_Debug}\\\"}" )
+			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_Release}\\\"}" )
+			set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_MinSizeRel}\\\"}" )
+			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_RelWithDebInfo}\\\"}" )
 		endif()
 		
 		ProcessorCount(ProcCount)
 
 		if( MSVC )
-			#if(${${PROJECT_NAME}_MODE} STREQUAL "STATIC")
+			#if(${PROJECT_CONFIGURATION} STREQUAL "STATIC")
 				set(CompilerFlags
 					CMAKE_CXX_FLAGS
 					CMAKE_CXX_FLAGS_DEBUG
@@ -337,7 +416,7 @@ MACRO(create_project mode defines includes links)
 		#endif()
 		
 		#------ need linker language flag for header only static libraries -----
-		if(${PROJECT_NAME}_CPP_SRC)
+		if(PROJECT_SOURCE_CPP)
 			#message("has cpp ${${PROJECT_NAME}_CPP_SRC}")
 			#set_source_files_properties(${${PROJECT_NAME}_SRC} PROPERTIES LANGUAGE CXX)
 		else()
@@ -431,4 +510,4 @@ MACRO(create_project mode defines includes links)
 
 		#install(SCRIPT ${CMAKE_MODULE_PATH}/Core/Install.cmake)
 	endif()
-endmacro(create_project mode linLibraries)
+endmacro()
