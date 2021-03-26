@@ -125,7 +125,7 @@ macro(GeneratePrecompiledHeader)
 			string(CONCAT generatedSourceContent ${generatedSourceContent} "/* GENERATED SOURCE FILE. DO NOT EDIT. */ \n\#include \"${generatedHeaderName}\"")
 			
 			# Add export api.h
-			if( ("${${PROJECT_NAME}_MODE}" STREQUAL "CONSOLE") OR ("${${PROJECT_NAME}_MODE}" STREQUAL "WIN32") )
+			if( ("${${PROJECT_NAME}_CONFIGURATION}" STREQUAL "CONSOLE") OR ("${${PROJECT_NAME}_CONFIGURATION}" STREQUAL "WIN32") )
 			else()
 				string(CONCAT generatedHeaderHeader ${generatedHeaderHeader} "/* Symbol Export API */\n#include \"${PROJECT_NAME}_API.generated.h\"\n\n")
 			endif()
@@ -194,16 +194,16 @@ MACRO(forced_include_public compileFlags includeProjs outString)
 			#message("${includeProj}_PUBLIC_INCLUDE_FILES: ${${includeProj}_PUBLIC_INCLUDE_FILES}")
 			if(NOT ${${includeProj}_PRECOMPILED_INCLUDE_FILES} STREQUAL ""
 				OR NOT ${${includeProj}_PUBLIC_INCLUDE_FILES} STREQUAL ""
-				OR "${${includeProj}_MODE}" STREQUAL "DYNAMIC"
-				OR "${${includeProj}_MODE}" STREQUAL "SHARED"
-				OR "${${includeProj}_MODE}" STREQUAL "STATIC"
+				OR "${${includeProj}_CONFIGURATION}" STREQUAL "DYNAMIC"
+				OR "${${includeProj}_CONFIGURATION}" STREQUAL "SHARED"
+				OR "${${includeProj}_CONFIGURATION}" STREQUAL "STATIC"
 				)
 				string(CONCAT outString2 ${outString2} "/* ${includeProj}: */ \n")
 			endif()
 
-			if("${${includeProj}_MODE}" STREQUAL "DYNAMIC"
-				OR "${${includeProj}_MODE}" STREQUAL "SHARED"
-				OR "${${includeProj}_MODE}" STREQUAL "STATIC")
+			if("${${includeProj}_CONFIGURATION}" STREQUAL "DYNAMIC"
+				OR "${${includeProj}_CONFIGURATION}" STREQUAL "SHARED"
+				OR "${${includeProj}_CONFIGURATION}" STREQUAL "STATIC")
 				string(CONCAT outString2 ${outString2} "\#include \"${includeProj}_API.generated.h\"\n")
 			endif()
 
@@ -258,7 +258,7 @@ MACRO(forced_include_protected compileFlags includeProjs outString)
 			if(NOT ${${includeProj}_PROTECTED_INCLUDE_FILES} STREQUAL "")
 				string(CONCAT ${outString} ${${outString}} "/* ${includeProj}: */ \n")
 
-				if(${${includeProj}_MODE} STREQUAL "DYNAMIC" OR ${${includeProj}_MODE} STREQUAL "SHARED")
+				if(${${includeProj}_CONFIGURATION} STREQUAL "DYNAMIC" OR ${${includeProj}_CONFIGURATION} STREQUAL "SHARED")
 					string(CONCAT ${outString} ${${outString}} "\#include \"${includeProj}_API.generated.h\"\n")
 				endif()
 				
@@ -296,7 +296,7 @@ MACRO(forced_include_public_recursive compileFlags includeProj outString)
 
 	string(CONCAT ${outString} ${${outString}} "/* ${includeProj}: */ \n")
 
-	if("${${includeProj}_MODE}" STREQUAL "DYNAMIC" OR "${${includeProj}_MODE}" STREQUAL "SHARED")
+	if("${${includeProj}_CONFIGURATION}" STREQUAL "DYNAMIC" OR "${${includeProj}_CONFIGURATION}" STREQUAL "SHARED")
 		string(CONCAT ${outString} ${${outString}} "\#include \"${includeProj}_API.generated.h\"\n")
 	endif()
 
@@ -376,11 +376,11 @@ MACRO(search_and_link_libraries libs)
 		if(NOT index EQUAL -1)
 			# we found a target
 			#list(APPEND ${PROJECT_NAME}_ALL_INCLUDE_DIRS ${lib})
-			if(${${lib}_MODE} STREQUAL "STATIC")
+			if(${${lib}_CONFIGURATION} STREQUAL "STATIC")
 				#message("linking: ${lib}")
 				target_link_libraries(${PROJECT_NAME} PUBLIC ${lib})
 			endif()
-			if(${${lib}_MODE} STREQUAL "DYNAMIC" OR ${${lib}_MODE} STREQUAL "SHARED")
+			if(${${lib}_CONFIGURATION} STREQUAL "DYNAMIC" OR ${${lib}_CONFIGURATION} STREQUAL "SHARED")
 				#message("linking: ${lib}")
 				target_link_libraries(${PROJECT_NAME} PUBLIC ${lib})
 			endif()
@@ -508,31 +508,31 @@ macro(ScanSourceFiles)
 endmacro()
 
 macro(GetTargetOutputExtension inString outString)
-	if(${${inString}_MODE} STREQUAL "STATIC")
+	if(${${inString}_CONFIGURATION} STREQUAL "STATIC")
 		if(MSVC)
 			set(${outString} ".lib")
 		elseif(MACOS)
 			set(${outString} ".a")
 		endif()
-	elseif(${${inString}_MODE} STREQUAL "DYNAMIC" OR ${${inString}_MODE} STREQUAL "SHARED" )
+	elseif(${${inString}_CONFIGURATION} STREQUAL "DYNAMIC" OR ${${inString}_CONFIGURATION} STREQUAL "SHARED" )
 		if(MSVC)
 			set(${outString} ".dll")
 		elseif(MACOS)
 			set(${outString} ".dylib")
 		endif()
-	elseif(${${inString}_MODE} STREQUAL "MODULE" )
+	elseif(${${inString}_CONFIGURATION} STREQUAL "MODULE" )
 		if(MSVC)
 			set(${outString} ".dll")
 		elseif(MACOS)
 			set(${outString} ".dylib")
 		endif()
-	elseif(${${inString}_MODE} STREQUAL "CONSOLE")
+	elseif(${${inString}_CONFIGURATION} STREQUAL "CONSOLE")
 		if(MSVC)
 			set(${outString} ".exe")
 		elseif(MACOS)
 			set(${outString} "")
 		endif()
-	elseif(${${inString}_MODE} STREQUAL "WIN32")
+	elseif(${${inString}_CONFIGURATION} STREQUAL "WIN32")
 		if(MSVC)
 			set(${outString} ".exe")
 		elseif(MACOS)
@@ -549,7 +549,6 @@ macro(GetIncludeProjectsRecursive inString outString)
 			if(NOT EXISTS ${include})
 				list(FIND ${outString} ${include} index)
 				if(index EQUAL -1)
-					message("${PROJECT_NAME} ${include}")
 					GetIncludeProjectsRecursive(${include} ${outString})
 					list(APPEND ${outString} ${include})
 				endif()
