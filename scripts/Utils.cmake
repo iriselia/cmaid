@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.0 )
 cmake_policy(SET CMP0054 NEW)
 
 
@@ -189,7 +189,7 @@ MACRO(forced_include_public compileFlags includeProjs outString)
 			list(APPEND ${PROJECT_NAME}_ALL_INCLUDE_DIRS ${${includeProj}_SOURCE_DIR_CACHED})
 				
 			# inherit build _BUILD_TYPE
-			add_definitions("-D${${includeProj}_BUILD_TYPE}")
+			#add_definitions("-D${${includeProj}_BUILD_TYPE}")
 
 			#message("${includeProj}_PUBLIC_INCLUDE_FILES: ${${includeProj}_PUBLIC_INCLUDE_FILES}")
 			if(NOT ${${includeProj}_PRECOMPILED_INCLUDE_FILES} STREQUAL ""
