@@ -2,12 +2,21 @@
 pushd %~dp0\..\..
 
 rem ## Find Visual Studio
+:FindVS2022
+pushd .\cmaid\scripts\Misc
+call GetVSComnToolsPath 17
+popd
+if "%VsComnToolsPath%" == "" goto FindVS2019
+set CMakeArg="Visual Studio 17 2022"
+echo Using Visual Studio 17 2022
+goto ReadyToBuild
 :FindVS2019
 pushd .\cmaid\scripts\Misc
 call GetVSComnToolsPath 16
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2017
 set CMakeArg="Visual Studio 16 2019"
+echo Using Visual Studio 16 2019
 goto ReadyToBuild
 :FindVS2017
 pushd .\cmaid\scripts\Misc
@@ -15,6 +24,7 @@ call GetVSComnToolsPath 15
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2015
 set CMakeArg="Visual Studio 15 2017 Win64"
+echo Using Visual Studio 15 2017 Win64
 goto ReadyToBuild
 :FindVS2015
 pushd .\cmaid\scripts\Misc
