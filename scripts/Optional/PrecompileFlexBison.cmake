@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.5 )
 
 if( PRECOMPILE_FLEX_AND_BISON AND NOT FLEX_EXECUTABLE STREQUAL "" AND NOT BISON_EXECUTABLE STREQUAL "")
 	file(GLOB_RECURSE MY_FLEX_FILES ${fileDir}/*.l)
