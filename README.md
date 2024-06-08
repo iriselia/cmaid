@@ -7,7 +7,7 @@ Sample program to demonstrate the robust features provided by [Purify](https://g
  - Install [CMake](http://www.cmake.org/) and Choose "add CMake to system PATH". **Optional.** This will accelerate build generation as CMake no longer needs to be downloaded at build time.
  - Clone to desktop or download ZIP.
  - Double click to execute "zGenerateSolution.bat".
- - Run and build!
+ - Build and run!
  
 [Purify](https://github.com/piaoasd123/Purify) is a [CMake](http://www.cmake.org/)-based automated build tool Developed by [Frank Park](https://www.linkedin.com/profile/view?id=365243381). Purify aims to significantly reduce the amount of learning required to fully utilize the productivity of CMake. It is designed to enable fast iteration and allow programmers create and maintain source code with ease.
 
