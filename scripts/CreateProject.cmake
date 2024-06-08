@@ -260,7 +260,7 @@ MACRO(cmaid_project)
 		
 		if(MSVC)
 			set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/binaries")
-			add_definitions(/wd4251) # x needs to have dll-interface to be used by clients of class "y"
+			#add_definitions(/wd4251) # x needs to have dll-interface to be used by clients of class "y"
 		endif()
 
 		if(XCODE)
