@@ -4,7 +4,7 @@ rem ## back up CWD
 pushd "%~dp0"
 
 rem ## Find Git from GitHub
-for /d %%a in ("%LOCALAPPDATA%\GitHub\PortableGit*") do (set Git=%%~fa\bin\Git.exe)
+for /d %%a in ("%LOCALAPPDATA%\GitHub\PortableGit*") do (set Git=%%~fa\cmd\Git.exe)
 if Git == "" ( goto Error_MissingGitHub )
 
 rem ## Find CMake or clone from Git
