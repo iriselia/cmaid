@@ -8,8 +8,8 @@ for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
 
 cd Binaries/
 del *.exe
-del *.ilk
 del *.dll
+@rmdir /s /q Backup
 @rmdir /s /q Libraries
 @rmdir /s /q Shaders
 cd ../
