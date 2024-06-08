@@ -16,25 +16,6 @@ Purify was designed to minimize the amount of labor required to create and maint
 
 Examples:
 -------
-`cmake_example/foo/CMakeLists.txt`, a subdirectory `CMakeLists.txt` with traditional CMake:
-```CMake
-project(foo)
-
-add_library (foo foo.cpp foo.h)
-
-add_definitions("-Dfoo_macro -Dptr_size=8")
-target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(foo PROPERTIES FOLDER "foo")
-```
-With Purify:
-```CMake
-set( DEFINE foo_macro ptr_size=8)
-set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
-set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both absolute directories and targets
-
-create_project(CONSOLE DEFINE INCLUDE LINK)
-```
-
 `cmake_example/CMakeLists.txt`, a top-level `CMakeLists.txt` with traditional CMake:
 ```CMake
 cmake_minimum_required (VERSION 3.0)
@@ -48,8 +29,18 @@ add_subdirectory (bar)
 add_subdirectory (myproject)
 ```
 
-With Purify:
+`cmake_example/foo/CMakeLists.txt`, a subdirectory `CMakeLists.txt` with traditional CMake:
+```CMake
+project(foo)
 
+add_library (foo foo.cpp foo.h)
+
+add_definitions("-Dfoo_macro -Dptr_size=8")
+target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(foo PROPERTIES FOLDER "foo")
+```
+
+`cmake_example/CMakeLists.txt` with Purify:
 ```CMake
 cmake_minimum_required( VERSION 3.0 )
 include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
@@ -57,6 +48,15 @@ include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
 SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 
 create_build( GLOBAL_DEFINITIONS )
+```
+
+`cmake_example/foo/CMakeLists.txt` with Purify:
+```CMake
+set( DEFINE foo_macro ptr_size=8)
+set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
+set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib bar) # LINK can handle both absolute directories and targets
+
+create_project(CONSOLE DEFINE INCLUDE LINK)
 ```
 
 Features:
