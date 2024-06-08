@@ -1,6 +1,5 @@
-@echo off
 
-pushd %~dp0\..
+pushd %~dp0\..\..
 
 rem ## Find Visual Studio
 :FindVS2019
@@ -91,7 +90,7 @@ cscript /nologo %SCRIPT%
 del %SCRIPT%
 
 :RemoveAllBuild
-1>NUL 2>NUL "%CMakePath%" -P "./Purify/detail/RemoveAllBuild.cmake"
+1>NUL 2>NUL "%CMakePath%" -P "./cmaid/scripts/detail/RemoveAllBuild.cmake"
 
 rem ## Finish up
 goto GenerateSuccess
@@ -132,11 +131,11 @@ set /p "=> Project successfully generated. Press enter to regenerate or press an
 PowerShell Exit($host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown').VirtualKeyCode);
 set KeyCode=%ErrorLevel%
 echo.
-cls
+rem cls
 if %KeyCode%==13 (
 goto Rebuild
 ) else (
-echo %KeyCode%
+rem echo %KeyCode%
 goto Exit
 )
 
