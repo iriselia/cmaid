@@ -4,7 +4,7 @@ rem ## back up CWD
 pushd "%~dp0"
 
 rem ## Find Git from GitHub
-for /d %%a in ("%APPDATA%\..\Local\GitHub\PortableGit*") do (set Git=%%~fa\bin\Git.exe)
+for /d %%a in ("%LOCALAPPDATA%\GitHub\PortableGit*") do (set Git=%%~fa\bin\Git.exe)
 if Git == "" ( goto Error_MissingGitHub )
 
 rem ## Find CMake or clone from Git
@@ -89,6 +89,7 @@ goto GenerateSolutionIcon
 
 :Rebuild
 pushd %~dp0\Build
+1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
 1>NUL 2>NUL "%CMakePath%" -G %CMakeArg% %~dp0
 popd
 goto GenerateSolutionIcon

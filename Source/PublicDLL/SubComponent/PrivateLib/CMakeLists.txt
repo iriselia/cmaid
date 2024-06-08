@@ -1,6 +1,7 @@
 SET( DEFINE
 )
 SET( INCLUDE
+	glm
 )
 SET( LINK
 )
