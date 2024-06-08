@@ -1,6 +1,8 @@
 MACRO( CreateVSProjectSettings )
 	# ONLY for msvc
 	if(MSVC)
+		/FC #Full Path of Source Code File in Diagnostics
+	
 		# Find user and system name
 		SET(SYSTEM_NAME $ENV{USERDOMAIN} CACHE STRING SystemName)
 		SET(USER_NAME $ENV{USERNAME} CACHE STRING UserName)
@@ -34,6 +36,7 @@ MACRO( CreateVSProjectSettings )
 
 	#TODO: REMOVE
 	if(XCODE)
+	set(CMAKE_MACOSX_RPATH 0)
 	set(CMAKE_OSX_ARCHITECTURES "")
 	endif()
 ENDMACRO()
