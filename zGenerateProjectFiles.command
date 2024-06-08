@@ -1,7 +1,12 @@
-#!/bin/sh
-# Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
-#
 # Simple wrapper around GenerateProjectFiles.sh using the
 # .command extension enables it to be run from the OSX Finder.
 
-sh "`dirname "$0"`"/zGenerateProjectFiles.sh
+currentDir="`dirname \"$0\"`"
+cd ${currentDir}
+currentFolder=${PWD##*/}
+
+sh ${currentDir}/zGenerateProjectFiles.sh
+
+osDir=:Macintosh\ HD${currentDir//[\/]/\:}
+
+osascript -e "tell application \"Finder\" to make alias to \"${osDir}:Build:${currentFolder}.xcodeproj\" at \"${osDir}\""
