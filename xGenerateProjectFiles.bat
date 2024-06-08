@@ -46,7 +46,7 @@ if not defined CMakePath (
 )
 
 rem ## Find Purify or clone from Git
-IF NOT EXIST %~dp0\Purify\Main.cmake (
+IF NOT EXIST %~dp0\Purify\Core\Loader.cmake (
 		mkdir Purify
 		Attrib +h +s +r Purify
 		echo Cloning Purify from GitHub...
