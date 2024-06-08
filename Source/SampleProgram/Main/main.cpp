@@ -11,9 +11,9 @@ int main()
 	pDLLObject->SayHi();
 	delete pDLLObject;
 
+	/*
 	// Example 1: PrivateLibObject is invisible in this namespace but available in the DLL.
 	// See DLLObject() Constructor for details
-	/*
 	auto pLibObject = new PrivateLib::PrivateLibObject;
 	pLibObject->SayHi();
 	delete pLibObject;
