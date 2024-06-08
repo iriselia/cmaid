@@ -10,18 +10,25 @@ cd "`dirname "$0"`"
 #  exit 1
 #fi 
 #
+username="$(whoami)"
+
 if [ "$(uname)" = "Darwin" ]; then
-	github="/Applications/GitHub.app/Contents/MacOS/github"
-	if [ -f "$github" ]; then
-		echo "found github"
+	github="/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
+	githubUser="/Users/$username/Applications/GitHub Desktop.app/Contents/Resources/git/bin/git"
+	if [ -f "$github" ]; then		
+		printf "\e[0;32mFound GitHub Desktop. \e[0m \n"
+	elif [ -f "$githubUser" ]; then
+		github="$githubUser"
+		printf "\e[0;32mFound GitHub Desktop. \e[0m \n"
 	else
-		echo "github not found"
+		printf "\e[0;31mFatal Error: Could not find GitHub Desktop. \e[0m \n"
 	fi
 	cmake="/Applications/CMake.app/Contents/bin/cmake"
 	if [ -f "$cmake" ]; then
-		echo "found cmake"
+		printf "\e[0;32mFound CMake \e[0m \n"
 	else
-		echo "cmake not found"
+		printf "\e[0;31m Fatal Error: Could not find CMake. \e[0m \n"
+		exit
 	fi
 
 	purify="$(pwd)/Purify"
