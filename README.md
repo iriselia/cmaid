@@ -19,7 +19,7 @@ License
 -------
 
 Purify is distributed under the OSI-approved BSD 3-clause License.
-See [LICENSE](https://raw.github.com/piaoasd123/CMake/master/LICENSE) for details.
+See [LICENSE](https://raw.github.com/piaoasd123/PurifySampleProject/master/LICENSE) for details.
 
 Reporting Bugs
 --------------
