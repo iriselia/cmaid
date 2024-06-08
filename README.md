@@ -7,7 +7,7 @@ A work-in-progress documentation can be found in the [wiki](https://github.com/f
 
 Motivation:
 -------
-The CMake scripting language is not the easiest to grasp for beginners. Even if one become highly proficient at using CMake, changes to the codebase can still cause unnecessary time spent on maintaining CMake scripts.
+The CMake scripting language is not the easiest to grasp for beginners. Even after one becomes proficient at using CMake, changes to the codebase can still cause unnecessary time spent on maintaining CMake scripts.
 
 Purify was designed to minimize the amount of labor required to create and maintain cross-platform C++ projects with CMake by:
    * offering helper functions that reduce the number of lines required to write fully functional `CMakeLists.txt` files,
