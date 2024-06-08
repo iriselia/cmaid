@@ -186,76 +186,76 @@ MACRO(create_project mode defines includes links)
 		endif()
 		
 		#------ Create Auto-Include Header ------
-		if( NOT ${PRECOMPILED_HEADER} STREQUAL "")
-			set(generatedHeader "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.h")
-			set(generatedSource "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.cpp")
-			set(generatedHeaderContent "")
-			set(generatedSourceContent "")
-			GET_FILENAME_COMPONENT(generatedHeaderName ${generatedHeader} NAME)
-			set(generatedBinary "${PROJECT_NAME}-$(Configuration).generated.pch")
-			set(usePrecompiled ${generatedHeaderName})
-			set(forceInclude ${generatedHeaderName})
-			set(precompiledOutputBinary ${generatedBinary})
-			file(GLOB existingGeneratedHeader ${generatedHeader} )
-			file(GLOB existingGeneratedSource ${generatedSource} )
-			
-			string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* GENERATED HEADER FILE. DO NOT EDIT. */\n\n")
-			string(CONCAT generatedSourceContent ${generatedSourceContent} "/* GENERATED SOURCE FILE. DO NOT EDIT. */ \n\#include \"${generatedHeaderName}\"")
-			
-			# Add user-defined precompiled header to generated precompiled header
-			string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* Private pre-compiled header */\n")
-			if(NOT ${PRECOMPILED_HEADER_NAME} STREQUAL "")
-				#message("project name: ${PROJECT_NAME},${PRECOMPILED_HEADER_NAME}\"")
-				string(CONCAT generatedHeaderContent ${generatedHeaderContent} "\#include \"${PRECOMPILED_HEADER_NAME}\"\n")
-			else()
-				string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* ${PROJECT_NAME} does not contain pre-compiled header .pch.h */\n")
-			endif()
-			
-			
-			set(outCompileFlags "")
-			if(NOT "${includes}" STREQUAL "")
-				message(STATUS "Before: ${PROJECT_NAME}, includes ${includeProjs}")
-				force_include_recursive(outCompileFlags "${includeProjs}" generatedHeaderContent)
-				#message("After: ${generatedHeaderContent}")
-			else()
-				force_include_recursive(outCompileFlags "EMPTY" generatedHeaderContent)
-			endif()
-			
-			if(NOT existingGeneratedHeader STREQUAL "" AND NOT existingGeneratedSource STREQUAL "")
-				file(READ ${existingGeneratedHeader} existingGeneratedHeaderContent)
-				if(NOT ${existingGeneratedHeaderContent} STREQUAL ${generatedHeaderContent})
-					file(WRITE ${existingGeneratedHeader} ${generatedHeaderContent})
-				endif()
-				file(READ ${existingGeneratedSource} existingGeneratedSourceContent)
-				if(NOT ${existingGeneratedSourceContent} STREQUAL ${generatedSourceContent})
-					file(WRITE ${existingGeneratedSource} ${generatedSourceContent})
-				endif()
-			else()
-				file(WRITE ${generatedHeader} ${generatedHeaderContent})
-				file(WRITE ${generatedSource} ${generatedSourceContent})
-			endif()
-
-			SOURCE_GROUP("Generated" FILES ${generatedHeader})
-			SOURCE_GROUP("Generated" FILES ${generatedSource})
-			list(APPEND MY_HEADERS ${generatedHeader})
-			list(APPEND ${PROJECT_NAME}_SRC ${generatedSource})
-
-			if(MSVC)
-				SET_SOURCE_FILES_PROPERTIES(${${PROJECT_NAME}_SRC}
-					PROPERTIES COMPILE_FLAGS
-					"/Yu\"${usePrecompiled}\"
-					/FI\"${forceInclude}\"
-					/FI\"${${PROJECT_NAME}_PRIVATE_INCLUDE_FILES}\"
-					/Fp\"${precompiledOutputBinary}\""
-												   OBJECT_DEPENDS "${precompiledOutputBinary}")
-				
-				SET_SOURCE_FILES_PROPERTIES(${generatedSource}
-					PROPERTIES COMPILE_FLAGS "/Yc\"${generatedHeaderName}\" /Fp\"${generatedBinary}\""
-					OBJECT_OUTPUTS "${generatedBinary}")
-			endif()
-		else( NOT ${PRECOMPILED_HEADER} STREQUAL "")
-			file(WRITE "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pub.h" )
+		#if( NOT ${PRECOMPILED_HEADER} STREQUAL "")
+		set(generatedHeader "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.h")
+		set(generatedSource "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pch.cpp")
+		set(generatedHeaderContent "")
+		set(generatedSourceContent "")
+		GET_FILENAME_COMPONENT(generatedHeaderName ${generatedHeader} NAME)
+		set(generatedBinary "${PROJECT_NAME}-$(Configuration).generated.pch")
+		set(usePrecompiled ${generatedHeaderName})
+		set(forceInclude ${generatedHeaderName})
+		set(precompiledOutputBinary ${generatedBinary})
+		file(GLOB existingGeneratedHeader ${generatedHeader} )
+		file(GLOB existingGeneratedSource ${generatedSource} )
+		
+		string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* GENERATED HEADER FILE. DO NOT EDIT. */\n\n")
+		string(CONCAT generatedSourceContent ${generatedSourceContent} "/* GENERATED SOURCE FILE. DO NOT EDIT. */ \n\#include \"${generatedHeaderName}\"")
+		
+		# Add user-defined precompiled header to generated precompiled header
+		string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* Private pre-compiled header */\n")
+		if(NOT ${PRECOMPILED_HEADER_NAME} STREQUAL "")
+			#message("project name: ${PROJECT_NAME},${PRECOMPILED_HEADER_NAME}\"")
+			string(CONCAT generatedHeaderContent ${generatedHeaderContent} "\#include \"${PRECOMPILED_HEADER_NAME}\"\n")
+		else()
+			string(CONCAT generatedHeaderContent ${generatedHeaderContent} "/* ${PROJECT_NAME} does not contain pre-compiled header .pch.h */\n")
 		endif()
+		
+		
+		set(outCompileFlags "")
+		if(NOT "${includes}" STREQUAL "")
+			message(STATUS "Before: ${PROJECT_NAME}, includes ${includeProjs}")
+			force_include_recursive(outCompileFlags "${includeProjs}" generatedHeaderContent)
+			#message("After: ${generatedHeaderContent}")
+		else()
+			force_include_recursive(outCompileFlags "EMPTY" generatedHeaderContent)
+		endif()
+		
+		if(NOT existingGeneratedHeader STREQUAL "" AND NOT existingGeneratedSource STREQUAL "")
+			file(READ ${existingGeneratedHeader} existingGeneratedHeaderContent)
+			if(NOT ${existingGeneratedHeaderContent} STREQUAL ${generatedHeaderContent})
+				file(WRITE ${existingGeneratedHeader} ${generatedHeaderContent})
+			endif()
+			file(READ ${existingGeneratedSource} existingGeneratedSourceContent)
+			if(NOT ${existingGeneratedSourceContent} STREQUAL ${generatedSourceContent})
+				file(WRITE ${existingGeneratedSource} ${generatedSourceContent})
+			endif()
+		else()
+			file(WRITE ${generatedHeader} ${generatedHeaderContent})
+			file(WRITE ${generatedSource} ${generatedSourceContent})
+		endif()
+
+		SOURCE_GROUP("Generated" FILES ${generatedHeader})
+		SOURCE_GROUP("Generated" FILES ${generatedSource})
+		list(APPEND MY_HEADERS ${generatedHeader})
+		list(APPEND ${PROJECT_NAME}_SRC ${generatedSource})
+
+		if(MSVC)
+			SET_SOURCE_FILES_PROPERTIES(${${PROJECT_NAME}_SRC}
+				PROPERTIES COMPILE_FLAGS
+				"/Yu\"${usePrecompiled}\"
+				/FI\"${forceInclude}\"
+				/FI\"${${PROJECT_NAME}_PRIVATE_INCLUDE_FILES}\"
+				/Fp\"${precompiledOutputBinary}\""
+											   OBJECT_DEPENDS "${precompiledOutputBinary}")
+			
+			SET_SOURCE_FILES_PROPERTIES(${generatedSource}
+				PROPERTIES COMPILE_FLAGS "/Yc\"${generatedHeaderName}\" /Fp\"${generatedBinary}\""
+				OBJECT_OUTPUTS "${generatedBinary}")
+		endif()
+		##else( NOT ${PRECOMPILED_HEADER} STREQUAL "")
+		##	file(WRITE "${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}.generated.pub.h" )
+		##endif()
 		
 		
 		# Force C++ if there's any cpp file
