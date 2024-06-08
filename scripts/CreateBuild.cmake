@@ -3,9 +3,6 @@ cmake_policy( SET CMP0054 NEW )
 
 macro( create_build global_define )
 
-	# TODO COMMENT
-	set(PROJECT_NAMES "" CACHE STRING "" FORCE)
-
 	# Add solution-wide commandline definitions
 	# For example: set( global_define _CRT_SECURE_NO_WARNINGS ) will
 	# add _CRT_SECURE_NO_WARNINGS macro to all c++ projects in the current solution.
@@ -37,15 +34,14 @@ macro( create_build global_define )
 		#get the directory of the cmakelists
 		get_filename_component(fileDir ${file} DIRECTORY)
 		get_folder_name(${fileDir} projName)
+		list(APPEND PROJECT_NAMES ${projName})
 		#assume it's protobuf if descriptor.pb.cc is present
 		file(GLOB_RECURSE protobufSource ${fileDir}/descriptor.pb.cc)
 		if(protobufSource)
 			list(REMOVE_ITEM normalPriorityProjects ${fileDir}/CMakeLists.txt)
 			list(APPEND highPriorityProjects ${fileDir}/CMakeLists.txt)
-		else()
 		endif()
 	endforeach()
-
 
 	#Pre-Configure cache include dirs prior to adding subdirectories
 	foreach(file ${normalPriorityProjects})

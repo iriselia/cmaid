@@ -91,7 +91,7 @@ MACRO(create_project mode defines includes links)
 			endif()
 		ENDFOREACH(currentName ${includes})
 
-		# Resolve link libraries. Link entry can be a file or a project name
+		# Resolve link libraries. Link entry can be a lib file or a project name
 		foreach(linkEntry ${${PROJECT_NAME}_RECURSIVE_LINKS})
 			# If link entry is a file
 			if(EXISTS ${linkEntry})
