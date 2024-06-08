@@ -324,7 +324,16 @@ MACRO(create_project mode defines includes links)
 				   COMMENT "Copying resource files to the binary output directory...")
 			endif()
 		else()
-			message("FIX COPY")
+			if(NOT projectExtension STREQUAL "")
+				string(REPLACE "/" "\\" arg1 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}*.${projectExtension}")
+				string(REPLACE "/" "\\" arg2 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../")
+				add_custom_command(TARGET ${PROJECT_NAME}
+				   POST_BUILD
+				   COMMAND "COPY"
+				   ARGS "1>Nul" "2>Nul" "${arg1}" "${arg2}" "/Y"
+				   COMMENT "Copying resource files to the binary output directory...")
+			endif()
+			##message("FIX COPY")
 		endif()
 
 		# Shader Copy
