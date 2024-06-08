@@ -1,0 +1,2 @@
+[submodule "Purify"]
+	path = Purify	url = https://github.com/fpark12/Purify.Core.git
