@@ -25,6 +25,8 @@ This approach brings many benefits, for example:
 
 Examples:
 -------
+git submodule add -f https://github.com/jpark730/cmaid.git
+
 Here is a direct comparison of the traditional `CMakeLists.txt` approach and the Purify one. It is only meant to get you started using Purify's helper functions so that you can utilize other advanced features.
 
 __Traditional CMake:__
