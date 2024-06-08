@@ -109,7 +109,8 @@ Features:
 - Improves build speed by managing pre-compiled headers and forced-included headers based on config files
 
 
-# Build
+Build:
+-------
  - Install [Github Desktop](https://desktop.github.com/).
  - Clone Purify to desktop.
  - Execute the appropriate "GenerateProjectFiles" script for your platform to generate the project file.
