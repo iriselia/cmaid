@@ -208,7 +208,7 @@ macro( create_build global_define )
 #		COMMAND ${CMAKE_COMMAND}
 #		-DSrcDirs="${PROJECT_DIRS}"
 #		-DDestDir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../
-#		-P ${CMAKE_MODULE_PATH}/Detail/CopyResource.cmake
+#		-P ${CMAKE_MODULE_PATH}/CopyResource.cmake
 #		#COMMENT "Copying resource files to the binary output directory"
 #		)
 #
