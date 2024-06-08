@@ -51,7 +51,7 @@ if not defined CMakePath (
 )
 
 rem ## Find cmaid or clone from Git
-IF NOT EXIST %~dp0\Scripts\Loader.cmake (
+IF NOT EXIST %~dp0\scripts\Loader.cmake (
 		mkdir cmaid
 		Attrib +h +s +r cmaid
 		echo Cloning cmaid from GitHub...
@@ -68,7 +68,7 @@ IF NOT EXIST %~dp0\Scripts\Loader.cmake (
 		echo.
 )
 
-rem Purify/GenerateProjectFiles.bat
+scripts/GenerateProjectFiles.bat
 
 :Exit
 rem ## Restore original CWD in case we change it
