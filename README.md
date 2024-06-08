@@ -14,7 +14,7 @@ Purify was designed to minimize the amount of labor required to create and maint
  * automating certain build behaviors to simplify the process of writing `CMakeLists.txt` files, while
  * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
 
-Some of the benefits to this approach include:
+This approach brings many benefits, for example:
  * `CMakeLists.txt` files become shorter and easier to maintain and modify,
  * each project within a Purify-based build is highly modular, so a simple copy and paste would allow it to be reused in another Purify based project,
  * the source tree and the file system will be kept in sync through automatically creating source groups and naming projects based on the file system,
