@@ -11,7 +11,7 @@ The CMake scripting language is not the easiest to grasp for beginners. Even aft
 
 Purify was designed to minimize the amount of labor required to create and maintain cross-platform C++ projects with CMake by:
    * offering helper functions that reduce the number of lines required to write fully functional `CMakeLists.txt` files,
-   * automating certain build behavior to simplify the process of writing `CMakeLists.txt` files to generate a project, while
+   * automating certain build behaviors to simplify the process of writing `CMakeLists.txt` files, while
    * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
 
 Examples:
