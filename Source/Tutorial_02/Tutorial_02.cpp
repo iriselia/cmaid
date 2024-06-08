@@ -2,7 +2,7 @@
 #include "Tutorial_02_Static.h"
 #include "Tutorial_02_Shared.h"
 
-// Tutorial 2: How to use static and shared libraries.
+// Tutorial 2: Static and shared libraries.
 int main()
 {
 #ifdef TUTORIAL_02_STATIC
