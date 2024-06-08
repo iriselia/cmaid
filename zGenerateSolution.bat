@@ -10,10 +10,10 @@ if not defined CMakePath (
 
 mkdir Build
 cd Build
-REM "%CMakePath%" -G "Visual Studio 10 2010" ../
+"%CMakePath%" -G "Visual Studio 10 2010" ../
 "%CMakePath%" -G "Visual Studio 11 2012" ../
 "%CMakePath%" -G "Visual Studio 12 2013" ../
-REM "%CMakePath%" -G "Visual Studio 14 2015" ../
+"%CMakePath%" -G "Visual Studio 14 2015" ../
 cd ../
 
 for %%* in (.) do set CurrDirName=%%~n*
