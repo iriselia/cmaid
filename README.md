@@ -10,9 +10,14 @@ Motivation:
 The CMake scripting language is not the easiest to grasp for beginners. Even after one becomes proficient at CMake, changes to the codebase can still cause unnecessary time spent on maintaining CMake scripts.
 
 Purify was designed to minimize the amount of labor required to create and maintain cross-platform C++ projects with CMake by:
-   * offering helper functions that reduce the number of lines required to write fully functional `CMakeLists.txt` files,
-   * automating certain build behaviors to simplify the process of writing `CMakeLists.txt` files, while
-   * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
+ * offering helper functions that reduce the number of lines required to write fully functional `CMakeLists.txt` files,
+ * automating certain build behaviors to simplify the process of writing `CMakeLists.txt` files, while
+ * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
+
+The benefits include:
+ * `CMakeLists.txt` files become shorter and easier to maintain and modify,
+ * each project within a Purify-based build is highly modular, so a simple copy and paste would allow it to be reused in another Purify based project,
+ * No need for repetitive CMake scripting at all except when complex build behaviors are desired. (Such as precompiling .proto files with Google's protobuf compiler.)
 
 Examples:
 -------
@@ -32,7 +37,7 @@ add_subdirectory (foo)
 add_subdirectory (bar)
 ```
 
-Static lib foo, `cmake_example/foo/CMakeLists.txt`:
+Static lib foo, `cmake_example/Source/foo/CMakeLists.txt`:
 ```CMake
 project(foo)
 
@@ -48,7 +53,7 @@ target_link_libraries(foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib/3rdparty.lib)
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
 
-Executable bar links foo, `cmake_example/bar/CMakeLists.txt`:
+Executable bar links foo, `cmake_example/Source/bar/CMakeLists.txt`:
 ```CMake
 project(bar)
 
@@ -78,7 +83,7 @@ SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 create_build( GLOBAL_DEFINITIONS )
 ```
 
-Static lib foo: `cmake_example/foo/CMakeLists.txt`:
+Static lib foo: `cmake_example/Source/foo/CMakeLists.txt`:
 ```CMake
 set( DEFINE foo_macro ptr_size=8)
 set( INCLUDE ${CMAKE_SOURCE_DIR}/lib)
@@ -88,7 +93,7 @@ set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib)
 create_project(STATIC DEFINE INCLUDE LINK)
 ```
 
-Executable bar links foo, `cmake_example/bar/CMakeLists.txt`:
+Executable bar links foo, `cmake_example/Source/bar/CMakeLists.txt`:
 ```CMake
 set( DEFINE bar_macro ptr_size=8)
 set( INCLUDE foo)
