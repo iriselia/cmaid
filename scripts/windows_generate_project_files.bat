@@ -59,18 +59,18 @@ if NOT EXIST .\Build\CMakeCache.txt (
 :InitialBuild
 2>NUL mkdir x64
 rem Attrib +h +s +r x64
-2>NUL mkdir Build
+2>NUL mkdir build
 rem Attrib +h +s +r Build
-pushd .\Build
-"%CMakePath%" -G %CMakeArg% .. -DCMAKE_BUILD_FLAG=%CMAKE_BUILD_FLAG% || goto Error_FailedToGenerateSolution
+pushd .\build
+"%CMakePath%" -G %CMakeArg% .. || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
 
 :Rebuild
 2>NUL mkdir x64
 Attrib +h +s +r x64
-pushd .\Build
-"%CMakePath%" -G %CMakeArg% .. -DCMAKE_BUILD_FLAG=%CMAKE_BUILD_FLAG% || goto Error_FailedToGenerateSolution
+pushd .\build
+"%CMakePath%" -G %CMakeArg% .. || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
 
