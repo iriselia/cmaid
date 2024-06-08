@@ -12,10 +12,12 @@ MACRO(cmaid_project)
 	set(multiValueArgs DEFINE INCLUDE EXCLUDE LINK)
 	cmake_parse_arguments(PROJECT_ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	string(TOUPPER "${PROJECT_ARG_CONFIGURATION}" PROJECT_CONFIGURATION)
+	string(TOUPPER "${PROJECT_ARG_CONFIGURATION}" PROJECT_ARG_CONFIGURATION_UPPER)
+	set(PROJECT_CONFIGURATION "${PROJECT_ARG_CONFIGURATION_UPPER}")
 	set(PROJECT_DEFINES "${PROJECT_ARG_DEFINE}")
 	set(PROJECT_INCLUDES "${PROJECT_ARG_INCLUDE}")
 	set(PROJECT_EXCLUDES "${PROJECT_ARG_EXCLUDE}")
+	set(PROJECT_LINKS "${PROJECT_ARG_LINK}")
 
 	# Restore default name if no new name is specified.
 	if(PROJECT_ARG_NAME)
@@ -278,12 +280,11 @@ MACRO(cmaid_project)
 		if(PROJECT_INCLUDE_DIRS)
 			list(REMOVE_DUPLICATES PROJECT_INCLUDE_DIRS)
 		endif()
-		message("111111111${PROJECT_INCLUDE_DIRS}")
 
 		target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_INCLUDE_DIRS}" )
 
 		#----- Handle Links -----
-		search_and_link_libraries("${${links}}")
+		search_and_link_libraries("${${PROJECT_NAME}_LINKS}")
 
 		#----- compile flags -----
 		get_target_property(FLAGS ${PROJECT_NAME} COMPILE_FLAGS)
