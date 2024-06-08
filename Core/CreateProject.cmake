@@ -331,6 +331,8 @@ MACRO(create_project mode defines includes links)
 			endif()
 		else()
 			if(NOT projectExtension STREQUAL "")
+				string(arg1 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}*.${projectExtension}")
+				string(arg2 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../")
 				add_custom_command(TARGET ${PROJECT_NAME}
 				   POST_BUILD
 				   COMMAND "tar"
