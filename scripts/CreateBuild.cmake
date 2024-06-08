@@ -174,7 +174,6 @@ macro( cmaid_build )
 	endforeach(file ${normalPriorityProjects})
 
 	set(PROJECT_COUNT 0)
-
 	# All CMakeLists.txt files are processed in 2 stages. First run a preprocess pass
 	# to resolve project and include/link dependencies, then add a project in the second pass.
 	AddProjectPrepass(highPriorityProjects)

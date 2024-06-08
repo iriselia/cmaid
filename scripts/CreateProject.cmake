@@ -208,7 +208,17 @@ MACRO(cmaid_project)
 				file(WRITE ${${PROJECT_BINARY_DIR}/stub.c "")
 				list(APPEND PROJECT_SOURCE ${${PROJECT_BINARY_DIR}/stub.c)
 			endif()
-		endif()		
+		endif()	
+		
+		#----- compile flags -----
+		#[[
+		get_target_property(FLAGS ${PROJECT_NAME} COMPILE_FLAGS)
+		if(FLAGS STREQUAL "FLAGS-NOTFOUND")
+			set(FLAGS "")
+		endif()
+		set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS} ${outCompileFlags}")
+		]]#
+
 		#----- CREATE TARGET -----
 		set(projectExtension "")
 		add_definitions("-DCURRENT_PROJECT_NAME_IS_${PROJECT_NAME}")
@@ -256,6 +266,13 @@ MACRO(cmaid_project)
 			elseif(MACOS)
 				set(projectExtension "")
 			endif()
+		elseif(${PROJECT_CONFIGURATION} STREQUAL "DRIVER")
+			add_executable (${PROJECT_NAME} ${PROJECT_SOURCE} ${PROJECT_HEADERS} ${${PROJECT_NAME}_SHADERS} ${${PROJECT_NAME}_MISC} ${${PROJECT_NAME}_RESOURCES})
+			if(MSVC)
+				set(projectExtension ".sys")
+			elseif(MACOS)
+				set(projectExtension "")
+			endif()
 		endif()
 		
 		if(MSVC)
@@ -268,47 +285,61 @@ MACRO(cmaid_project)
 			SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
 		endif()
 		
-		
-		#----- Target Dependency -----
-		# disabled for now, needs to be enabled in createbuild.cmake as well
-		#add_dependencies(${PROJECT_NAME} UPDATE_RESOURCE) #----- globally shared resource update
-
-		#----- Exclude from all (Disabled)-----
-		#set_target_properties(${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-
-		#----- Handle includes -----
-		if(PROJECT_INCLUDE_DIRS)
-			list(REMOVE_DUPLICATES PROJECT_INCLUDE_DIRS)
+		ProcessorCount(ProcCount)
+		# /UMBCS /D_UNICODE /DUNICODE 
+		set(CMAKE_CXX_FLAGS_CUSTOM "/MP${ProcCount} /EHsc /FC /DNOMINMAX /std:c++latest")
+		#[[
+		# Only cache settings the first run
+		if( NOT CMAKE_CXX_FLAGS_CUSTOM )
+			message("cashing")
+			ProcessorCount(ProcCount)
+			# Enable Unicode, disable min max macros
+			set(CMAKE_CXX_FLAGS_CUSTOM "/MP${ProcCount} /FC /UMBCS /D_UNICODE /DUNICODE /DNOMINMAX /std:c++latest" CACHE STRING "Default CXX options" FORCE)
+			message("CMAKE_CXX_FLAGS_CUSTOM: ${CMAKE_CXX_FLAGS_CUSTOM}")
+			set(CMAKE_CXX_FLAGS_DEFAULT "${CMAKE_CXX_FLAGS_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_DEBUG_DEFAULT "${CMAKE_CXX_FLAGS_CUSTOM} ${CMAKE_CXX_FLAGS_DEBUG}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_RELEASE_DEFAULT "${CMAKE_CXX_FLAGS_CUSTOM} ${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_MINSIZEREL_DEFAULT "${CMAKE_CXX_FLAGS_CUSTOM} ${CMAKE_CXX_FLAGS_MINSIZEREL}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_DEFAULT "${CMAKE_CXX_FLAGS_CUSTOM} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE STRING "Default CXX options" FORCE)
+		else()
+			message("not cashing")
+			message("CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG_DEFAULT}")
+			#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
+			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO_DEFAULT}" CACHE STRING "Default CXX options" FORCE)
 		endif()
 
-		target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_INCLUDE_DIRS}" )
-
-		#----- Handle Links -----
-		search_and_link_libraries("${${PROJECT_NAME}_LINKS}")
-
-		#----- compile flags -----
-		get_target_property(FLAGS ${PROJECT_NAME} COMPILE_FLAGS)
-		if(FLAGS STREQUAL "FLAGS-NOTFOUND")
-			set(FLAGS "")
-		endif()
-		set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS} ${outCompileFlags}")
-
-		# Enable Unicode, disable min max macros
-		if( MSVC )
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FC /UMBCS /D_UNICODE /DUNICODE /DNOMINMAX")
-		endif()
+		message("CMAKE_CXX_FLAGS_DEFAULT: ${CMAKE_CXX_FLAGS_DEFAULT}")
 
 		# Store compiler flags as macro
 		if(MSVC)
-			string(REPLACE " " "\\\",\\\"" compilerFlags_Debug "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
-			string(REPLACE " " "\\\",\\\"" compilerFlags_Release "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
-			string(REPLACE " " "\\\",\\\"" compilerFlags_MinSizeRel "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
-			string(REPLACE " " "\\\",\\\"" compilerFlags_RelWithDebInfo "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
+			string(REPLACE " " "\\\",\\\"" compilerFlags_Debug "${CMAKE_CXX_FLAGS_DEBUG}" )
+			string(REPLACE " " "\\\",\\\"" compilerFlags_Release "${CMAKE_CXX_FLAGS_RELEASE}" )
+			string(REPLACE " " "\\\",\\\"" compilerFlags_MinSizeRel "${CMAKE_CXX_FLAGS_MINSIZEREL}" )
+			string(REPLACE " " "\\\",\\\"" compilerFlags_RelWithDebInfo "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_COMPILER_FLAGS={\\\"${compilerFlags_Debug}\\\"}" )
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /D_COMPILER_FLAGS={\\\"${compilerFlags_Release}\\\"}" )
 			set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /D_COMPILER_FLAGS={\\\"${compilerFlags_MinSizeRel}\\\"}" )
 			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /D_COMPILER_FLAGS={\\\"${compilerFlags_RelWithDebInfo}\\\"}" )
 		endif()
+
+		# Enable Unicode, disable min max macros
+		if( MSVC )
+			# Store root dir, build dir, and bin dir as macros
+			file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_ROOT_DIR=\\\"${CMAKE_SOURCE_DIR}\\\"")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_BUILD_DIR=\\\"${CMAKE_BINARY_DIR}\\\"")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_TARGET_PATH=\\\"${rel_path}\\\"")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_BINARIES_DIR=\\\"${CMAKE_SOURCE_DIR}/Binaries\\\"")
+			# Store include dirs as macro
+			string(REPLACE ";" "\\\",\\\"" PROJECT_INCLUDE_DIRS "${PROJECT_INCLUDE_DIRS}" )
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_INCLUDE_DIRS={\\\"${PROJECT_INCLUDE_DIRS}\\\"}")
+		endif()
+
+		message("CMAKE_CXX_FLAGS_DEFAULT: ${CMAKE_CXX_FLAGS_DEFAULT}")
 
 		# Store linker flags as macro
 		if(MSVC)
@@ -339,21 +370,7 @@ MACRO(cmaid_project)
 
 		endif()
 
-		# Store root dir, build dir, and bin dir as macros
-		if( MSVC )
-			file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_ROOT_DIR=\\\"${CMAKE_SOURCE_DIR}\\\"")
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_BUILD_DIR=\\\"${CMAKE_BINARY_DIR}\\\"")
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_TARGET_PATH=\\\"${rel_path}\\\"")
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_BINARIES_DIR=\\\"${CMAKE_SOURCE_DIR}/Binaries\\\"")
-		endif()
-
-		# Store include dirs as macro
-		if( MSVC )		
-			string(REPLACE ";" "\\\",\\\"" PROJECT_INCLUDE_DIRS "${PROJECT_INCLUDE_DIRS}" )
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_INCLUDE_DIRS={\\\"${PROJECT_INCLUDE_DIRS}\\\"}")
-		endif()
+		message("CMAKE_CXX_FLAGS_DEFAULT: ${CMAKE_CXX_FLAGS_DEFAULT}")
 
 		# Store link libs as macro
 		if(MSVC)
@@ -367,28 +384,33 @@ MACRO(cmaid_project)
 			set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_MinSizeRel}\\\"}" )
 			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /D_LINK_LIBS={\\\"${PROJECT_LINK_LIBS_RelWithDebInfo}\\\"}" )
 		endif()
-		
-		ProcessorCount(ProcCount)
 
+		]]#
+
+		string(REPLACE " " ";" CMAKE_CXX_FLAGS_CUSTOM_REPLACED ${CMAKE_CXX_FLAGS_CUSTOM})
+		target_compile_options(${PROJECT_NAME} PRIVATE ${CMAKE_CXX_FLAGS_CUSTOM_REPLACED})
+
+		#message("CMAKE_CXX_FLAGS_DEFAULT: ${CMAKE_CXX_FLAGS_DEFAULT}")
 		if( MSVC )
 			#if(${PROJECT_CONFIGURATION} STREQUAL "STATIC")
 				set(CompilerFlags
 					CMAKE_CXX_FLAGS
-					CMAKE_CXX_FLAGS_DEBUG
-					CMAKE_CXX_FLAGS_RELEASE
-					CMAKE_CXX_FLAGS_MINSIZEREL
-					CMAKE_CXX_FLAGS_RELWITHDEBINFO
+					#CMAKE_CXX_FLAGS_DEBUG
+					#CMAKE_CXX_FLAGS_RELEASE
+					#CMAKE_CXX_FLAGS_MINSIZEREL
+					#CMAKE_CXX_FLAGS_RELWITHDEBINFO
 					CMAKE_C_FLAGS
-					CMAKE_C_FLAGS_DEBUG
-					CMAKE_C_FLAGS_RELEASE
-					CMAKE_C_FLAGS_MINSIZEREL
-					CMAKE_C_FLAGS_RELWITHDEBINFO
+					#CMAKE_C_FLAGS_DEBUG
+					#CMAKE_C_FLAGS_RELEASE
+					#CMAKE_C_FLAGS_MINSIZEREL
+					#CMAKE_C_FLAGS_RELWITHDEBINFO
 				)
 
 
 				if (MSVC)
 					foreach(CompilerFlag ${CompilerFlags})
-						set(${CompilerFlag} "/MP${ProcCount} ${${CompilerFlag}}")
+						#message("${CompilerFlag}: ${${CompilerFlag}}")
+						#set(${CompilerFlag} "${${CompilerFlag}}" CACHE STRING "Default CXX options" FORCE)
 					endforeach()
 				endif()
 			#endif()
@@ -397,6 +419,23 @@ MACRO(cmaid_project)
 			#get_WIN32_WINNT(ver)
 			#add_definitions(-D_WIN32_WINNT=${ver})
 		endif()
+		
+		#----- Target Dependency -----
+		# disabled for now, needs to be enabled in createbuild.cmake as well
+		#add_dependencies(${PROJECT_NAME} UPDATE_RESOURCE) #----- globally shared resource update
+
+		#----- Exclude from all (Disabled)-----
+		#set_target_properties(${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+
+		#----- Handle includes -----
+		if(PROJECT_INCLUDE_DIRS)
+			list(REMOVE_DUPLICATES PROJECT_INCLUDE_DIRS)
+		endif()
+
+		target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_INCLUDE_DIRS}" )
+
+		#----- Handle Links -----
+		search_and_link_libraries("${${PROJECT_NAME}_LINKS}")
 
 		#------ set target filter -----
 		#if( MSVC )
@@ -440,25 +479,25 @@ MACRO(cmaid_project)
 			SET(CMAKE_OSX_DEPLOYMENT_TARGET ${OSX_VERSION_STRING} CACHE STRING "Deployment target for OSX" FORCE)
 
 			target_compile_features(${PROJECT_NAME} PRIVATE cxx_range_for)
-#TODO: CLEAN UP.
+			#TODO: CLEAN UP.
 
-# use, i.e. don't skip the full RPATH for the build tree
-#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-#			MESSAGE("A ${CMAKE_SKIP_BUILD_RPATH}")
+			# use, i.e. don't skip the full RPATH for the build tree
+			#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+			#			MESSAGE("A ${CMAKE_SKIP_BUILD_RPATH}")
 
 
 
-# don't add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-#			MESSAGE("D ${CMAKE_INSTALL_RPATH_USE_LINK_PATH}")
-#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-# when building, don't use the install RPATH already
-# (but later on when installing)
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH true) 
-#			MESSAGE("B ${CMAKE_BUILD_WITH_INSTALL_RPATH}")
-# the RPATH to be used when installing
-#SET(CMAKE_INSTALL_RPATH "@loader_path")
-#			MESSAGE("C ${CMAKE_INSTALL_RPATH}")
+			# don't add the automatically determined parts of the RPATH
+			# which point to directories outside the build tree to the install RPATH
+			#			MESSAGE("D ${CMAKE_INSTALL_RPATH_USE_LINK_PATH}")
+			#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+			# when building, don't use the install RPATH already
+			# (but later on when installing)
+			#SET(CMAKE_BUILD_WITH_INSTALL_RPATH true) 
+			#			MESSAGE("B ${CMAKE_BUILD_WITH_INSTALL_RPATH}")
+			# the RPATH to be used when installing
+			#SET(CMAKE_INSTALL_RPATH "@loader_path")
+			#			MESSAGE("C ${CMAKE_INSTALL_RPATH}")
 
 			#UNNECESSARY. ONLY AFFECTS DLL, AND @RPATH IS THE DEFAULT INSTALL PATH.
 			SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON INSTALL_NAME_DIR "@rpath")
@@ -508,7 +547,7 @@ MACRO(cmaid_project)
 			##message("FIX COPY")
 		endif()
 
-
+		MATH(EXPR PROJECT_COUNT "${PROJECT_COUNT}+1")
 		#install(SCRIPT ${CMAKE_MODULE_PATH}/Core/Install.cmake)
 	endif()
 endmacro()
