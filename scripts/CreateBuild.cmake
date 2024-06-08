@@ -1,7 +1,13 @@
 cmake_minimum_required( VERSION 3.0 )
 cmake_policy( SET CMP0054 NEW )
 
-macro( create_build global_define )
+macro( cmaid_build )
+
+	set(options) #set(options OPTIONAL FAST)
+	set(oneValueArgs) #set(oneValueArgs DESTINATION RENAME)
+	set(multiValueArgs DEFINE )
+	cmake_parse_arguments(MY_INSTALL "${options}" "${oneValueArgs}"
+	"${multiValueArgs}" ${ARGN} )
 
 	# Add solution-wide commandline definitions
 	# For example: set( global_define _CRT_SECURE_NO_WARNINGS ) will
@@ -224,7 +230,9 @@ macro(AddProjectPrepass projects)
 		string(SUBSTRING ${fileDir} ${firDirStrSize} -1 protoFileDirSubStr)
 
 		set(${PROJECT_NAME}_SOURCE_DIR "${fileDir}")
+		set(PROJECT_SOURCE_DIR "${fileDir}")
 		set(${PROJECT_NAME}_BINARY_DIR "${CMAKE_BINARY_DIR}/${protoFileDirSubStr}")
+		set(PROJECT_BINARY_DIR "${CMAKE_BINARY_DIR}/${protoFileDirSubStr}")
 
 		# Run create_project etc without actually creating projects.
 		# This way we can process project information for deferred resolution.
@@ -243,6 +251,8 @@ macro(AddProject projects)
 
 		# This step actually creates the projects we need. We must make sure all projects have been
 		# preprocessed through AddProjectPrepass.
+		set(PROJECT_SOURCE_DIR "${fileDir}")
+		set(PROJECT_BINARY_DIR "${CMAKE_BINARY_DIR}/${protoFileDirSubStr}")
 		add_subdirectory( ${fileDir} )
 
 		# Add symbol export file for each project
