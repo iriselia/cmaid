@@ -1,7 +1,7 @@
 # Purify
 
 This is a lazy cross-platform build manager for C++ written in [CMake](http://www.cmake.org/), Batch scripts, and Shell scripts and licensed under the BSD 2-clause License. It was designed to minimize the effort to create and maintain cross-platform C++ projects.
-Documentation is found in the [wiki](https://github.com/fpark12/PurifyCore/wiki).
+A work-in-progress documentation can be found in the [wiki](https://github.com/fpark12/PurifyCore/wiki).
 
 # Features
 - Off-the-shelf solution for lazy management of cross-platform C++ builds.
