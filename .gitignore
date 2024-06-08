@@ -5,6 +5,7 @@
 build/
 Binaries/Libraries/*
 Binaries/Shaders/*
+Binaries/Backup/*
 Purify/
 CMake/
 PortableCMake-Win32/
@@ -28,6 +29,11 @@ ipch/
 *.vcxproj*
 *.sln
 *.stamp*
+
+# Mac OS X files
+*.dylib
+*.xcodeproj
+*.a
 
 # Cmake cache files
 cmake_install.cmake
