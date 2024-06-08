@@ -11,10 +11,6 @@ Sameple Program
 ---------------
 https://github.com/piaoasd123/PurifySampleProject
 
-Credits
--------
-
-
 
 License
 -------
