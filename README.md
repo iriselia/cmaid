@@ -11,7 +11,7 @@ This is a lazy cross-platform build manager for C++ written in [CMake](http://ww
 - Improves build speed by managing pre-compiled headers and forced-included headers based on config files
 
 
-# Build the tutorials
+# Build the Tutorials
  - Install [Github Desktop](https://desktop.github.com/).
  - Clone Purify to desktop.
  - Execute the appropriate "zGenerateProjectFiles" script for your platform to generate the project file.
