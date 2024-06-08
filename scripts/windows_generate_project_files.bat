@@ -50,7 +50,7 @@ call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
 :ReadyToBuild
 echo Setting up project files...
 echo.
-if NOT EXIST .\Build\CMakeCache.txt (
+if NOT EXIST .\build\CMakeCache.txt (
 	goto InitialBuild
 ) else (
 	goto Rebuild
@@ -59,9 +59,9 @@ if NOT EXIST .\Build\CMakeCache.txt (
 :InitialBuild
 2>NUL mkdir x64
 rem Attrib +h +s +r x64
-2>NUL mkdir Build
-rem Attrib +h +s +r Build
-pushd .\Build
+2>NUL mkdir build
+rem Attrib +h +s +r build
+pushd .\build
 "%CMakePath%" -G %CMakeArg% .. || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
@@ -69,7 +69,7 @@ goto GenerateSolutionIcon
 :Rebuild
 2>NUL mkdir x64
 Attrib +h +s +r x64
-pushd .\Build
+pushd .\build
 "%CMakePath%" -G %CMakeArg% .. || goto Error_FailedToGenerateSolution
 popd
 goto GenerateSolutionIcon
@@ -82,7 +82,7 @@ set SCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SCRIPT%
 echo sLinkFile = "%CD%\zz%CurrDirName%.sln.lnk" >> %SCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SCRIPT%
-echo oLink.TargetPath = "%CD%\Build\%CurrDirName%.sln" >> %SCRIPT%
+echo oLink.TargetPath = "%CD%\build\%CurrDirName%.sln" >> %SCRIPT%
 echo oLink.IconLocation = "%SystemRoot%\system32\vsjitdebugger.exe, 0" >> %SCRIPT%
 echo oLink.Save >> %SCRIPT%
 
