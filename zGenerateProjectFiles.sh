@@ -31,6 +31,8 @@ if [ "$(uname)" = "Darwin" ]; then
 		echo "found purify"
 	else
 		echo $purify "purify not found"
+		mkdir Purify
+		chflags hidden Purify
 		git clone "https://github.com/piaoasd123/Purify.git"
 	fi
 
