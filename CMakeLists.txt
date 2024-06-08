@@ -28,7 +28,7 @@ else()																#  |
 		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")					#  |
 endif()																#  |
 # Set module path													#  |
-if(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../Purify")					#  |
+if(EXISTS "${CMAKE_SOURCE_DIR}/../Purify")							#  |
 	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../Purify")			#  |
 else()																#  |
 	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Purify")				#  |
