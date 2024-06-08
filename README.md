@@ -14,9 +14,10 @@ Purify was designed to minimize the amount of labor required to create and maint
    * automating certain build behavior to simplify the process of writing `CMakeLists.txt` files to generate a project, while
    * retaining the ability to extend complex build behaviors through traditional `CMakeLists.txt` scripting.
 
-Getting started:
+Examples:
 -------
 Here is a direct comparison of the traditional `CMakeLists.txt` and the Purify `CMakeLists.txt`. It is only meant to get you started so that you can utilize other advanced features Purify offers.
+
 __Traditional CMake:__
  
 Top-level: `cmake_example/CMakeLists.txt`:
