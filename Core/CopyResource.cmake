@@ -11,6 +11,7 @@ file(GLOB_RECURSE
 	${SrcDir}/*.glsl
 	)
 
+message("Copying resource files to the binary output directory...")
 message("Copy perfromed from:" ${SrcDir})
 message("                 to:" ${DestDir})
 
