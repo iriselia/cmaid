@@ -4,4 +4,4 @@
 # Simple wrapper around GenerateProjectFiles.sh using the
 # .command extension enables it to be run from the OSX Finder.
 
-sh "`dirname "$0"`"/zGenerateProjectFiles.sh
+sh "`dirname "$0"`"/zCleanUp.sh

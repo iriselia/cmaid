@@ -11,17 +11,36 @@ cd "`dirname "$0"`"
 #fi 
 #
 if [ "$(uname)" = "Darwin" ]; then
-	cmake="/Applications/CMake.app/Contents/bin/cmake"
-	if [ -f "$cmake" ]
-	then
-		echo "found"
+	github="/Applications/GitHub.app/Contents/MacOS/github"
+	if [ -f "$github" ]; then
+		echo "found github"
 	else
-		echo "not found"
+		echo "github not found"
 	fi
+	cmake="/Applications/CMake.app/Contents/bin/cmake"
+	if [ -f "$cmake" ]; then
+		echo "found cmake"
+	else
+		echo "cmake not found"
+	fi
+
+	purify="$(pwd)/Purify"
+
+
+	if [ -d "$purify" ]; then
+		echo "found purify"
+	else
+		echo $purify "purify not found"
+		git clone "https://github.com/piaoasd123/Purify.git"
+	fi
+
+	
+	
 #	cd Engine/Build/BatchFiles/Mac
 #	sh ./GenerateLLDBInit.sh
 #	sh ./GenerateProjectFiles.sh $@
 else
+	echo "assume (GNU/)Linux"
 #    # assume (GNU/)Linux
 #	cd Engine/Build/BatchFiles/Linux
 #	bash ./GenerateProjectFiles.sh $@
