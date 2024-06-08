@@ -26,7 +26,7 @@ add_definitions("-Dfoo_macro -Dptr_size=8")
 target_include_directories (foo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(foo PROPERTIES FOLDER "foo")
 ```
-With Purify you can write:
+With Purify:
 ```CMake
 set( DEFINE foo_macro ptr_size=8)
 set( INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} bar) # Notice INCLUDE can handle both folders and targets
@@ -48,7 +48,7 @@ add_subdirectory (bar)
 add_subdirectory (myproject)
 ```
 
-With Purify you can write:
+With Purify:
 
 ```CMake
 cmake_minimum_required( VERSION 3.0 )
