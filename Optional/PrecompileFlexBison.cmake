@@ -1,0 +1,15 @@
+cmake_minimum_required( VERSION 2.8 )
+
+if( PRECOMPILE_FLEX_AND_BISON AND NOT FLEX_EXECUTABLE STREQUAL "" AND NOT BISON_EXECUTABLE STREQUAL "")
+	file(GLOB_RECURSE MY_FLEX_FILES ${fileDir}/*.l)
+	file(GLOB_RECURSE MY_BISON_FILES ${fileDir}/*.y)
+		
+	if(MY_FLEX_FILES AND MY_BISON_FILES)
+		REMOVE_FILE_EXTENSION(${MY_FLEX_FILES} flexFiles)
+		REMOVE_FILE_EXTENSION(${MY_BISON_FILES} bisonFiles)
+		SET( FlexArgs "-o${flexFiles}.flex.c" "${flexFiles}.l")
+		SET( BisonArgs "-o${bisonFiles}.bison.c" "-d" "${bisonFiles}.y" )
+		execute_process(COMMAND ${FLEX_EXECUTABLE} ${FlexArgs})
+		execute_process(COMMAND ${BISON_EXECUTABLE} ${BisonArgs})
+	endif()
+endif()
