@@ -6,8 +6,8 @@ rm -rf *.xcodeproj
 rm -rf *.lnk
 
 #for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
-rm -rf CMake
-rm -rf Purify
+#rm -rf CMake
+#rm -rf Purify
 rm -rf Build
 
 if [ -d "$(pwd)/Binaries" ]; then
