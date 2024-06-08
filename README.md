@@ -84,6 +84,8 @@ include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
 
 SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 
+# Scans the root folder of the project recursively for any `CMakeLists.txt` files.
+# It then constructs the build tree and resolves dependencies between `CMakeLists.txt` automatically.
 create_build( GLOBAL_DEFINITIONS )
 ```
 
@@ -93,7 +95,7 @@ set( DEFINE foo_macro ptr_size=8)
 set( INCLUDE ${CMAKE_SOURCE_DIR}/lib)
 set( LINK ${CMAKE_SOURCE_DIR}/lib/3rd_party.lib)
 
-// Automatically manages source tree and creates include directories.
+# Automatically manages source tree and creates include directories.
 create_project(STATIC DEFINE INCLUDE LINK)
 ```
 
@@ -103,7 +105,7 @@ set( DEFINE bar_macro ptr_size=8)
 set( INCLUDE foo)
 set( LINK foo)
 
-// Automatically manages source tree and creates include directories.
+# Automatically manages source tree and creates include directories.
 create_project(CONSOLE DEFINE INCLUDE LINK)
 
 # Purify automatically sets ${PROJECT_NAME} to the name of the folder where the `CMakeLists.h` is located.
