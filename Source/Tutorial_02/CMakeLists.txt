@@ -9,4 +9,4 @@ Tutorial_02_Static
 Tutorial_02_Shared
 )
 
-create_project(CONSOLE "${DEFINE}" "${INCLUDE}" "${LINK}")
+create_project(CONSOLE DEFINE INCLUDE LINK)
