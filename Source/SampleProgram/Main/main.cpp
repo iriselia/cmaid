@@ -33,7 +33,7 @@ int main()
 	invisible in this namespace but available to PublicDLL.
 	See DLLObject() Constructor for details. 
 	*/
-	/* Comment this line to activate the code: "// /*"
+	//* Comment this line to activate the code: "// /*"
 	auto pLibObject = new PrivateLib::PrivateLibObject;
 	pLibObject->SayHi();
 	delete pLibObject;

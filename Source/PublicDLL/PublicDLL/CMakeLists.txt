@@ -1,10 +1,10 @@
 SET( DEFINE
-	)
+)
 SET( INCLUDE
-	PrivateLib
-	)
+PrivateLib
+)
 SET( LINK
-	PrivateLib
-	)
+PrivateLib
+)
 
 create_project(DYNAMIC "${DEFINE}" "${INCLUDE}" "${LINK}")
