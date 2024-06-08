@@ -4,7 +4,7 @@
 #  MinSizeRel     : w/o debug symbols, w/  optimization, stripped binaries
 cmake_minimum_required( VERSION 3.0 )
 
-include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
+include( "${CMAKE_SOURCE_DIR}/Purify/Core/Loader.cmake" )
 # Add global compile/link flags and preprocessor definitions
 SET( GLOBAL_DEFINE _CRT_SECURE_NO_WARNINGS)
 # Enable Unicode

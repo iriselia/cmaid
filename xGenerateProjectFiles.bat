@@ -51,12 +51,12 @@ IF NOT EXIST %~dp0\Purify\Core\Loader.cmake (
 		Attrib +h +s +r Purify
 		echo Cloning Purify from GitHub...
 		echo.
-		"%Git%" clone https://github.com/fpark12/PurifyCore.git Purify
+		"%Git%" clone https://github.com/fpark12/PurifyCore.git Purify\Core
 		echo.
 ) else (
 		echo Updating Purify...
 		echo.
-		pushd %~dp0\Purify\
+		pushd %~dp0\Purify\Core
 		1>NUL "%Git%" pull https://github.com/fpark12/PurifyCore.git
 		popd
 		echo.
@@ -64,35 +64,35 @@ IF NOT EXIST %~dp0\Purify\Core\Loader.cmake (
 
 rem ## Find Visual Studio
 :FindVS2017
-pushd %~dp0\Purify\BatchFiles
+pushd %~dp0\Purify\Core\BatchFiles
 call GetVSComnToolsPath 15
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2015
 set CMakeArg="Visual Studio 15 2017 Win64"
 goto ReadyToBuild
 :FindVS2015
-pushd %~dp0\Purify\BatchFiles
+pushd %~dp0\Purify\Core\BatchFiles
 call GetVSComnToolsPath 14
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2013
 set CMakeArg="Visual Studio 14 2015 Win64"
 goto ReadyToBuild
 :FindVS2013
-pushd %~dp0\Purify\BatchFiles
+pushd %~dp0\Purify\Core\BatchFiles
 call GetVSComnToolsPath 12
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2012
 set CMakeArg="Visual Studio 12 2013 Win64"
 goto ReadyToBuild
 :FindVS2012
-pushd %~dp0\Purify\BatchFiles
+pushd %~dp0\Purify\Core\BatchFiles
 call GetVSComnToolsPath 11
 popd
 if "%VsComnToolsPath%" == "" goto FindVS2010
 set CMakeArg="Visual Studio 11 2012 Win64"
 goto ReadyToBuild
 :FindVS2010
-pushd %~dp0\Purify\BatchFiles
+pushd %~dp0\Purify\Core\BatchFiles
 call GetVSComnToolsPath 10
 popd
 if "%VsComnToolsPath%" == "" goto Error_MissingVisualStudio
