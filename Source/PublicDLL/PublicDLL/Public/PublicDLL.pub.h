@@ -3,7 +3,7 @@
 #pragma once
 #ifndef EXAMPLEAPI
 #	ifdef IS_STATIC // Compiling .lib
-#		define EXAMPLEAPI  extern
+#		define EXAMPLEAPI
 #	else
 #		ifdef IS_DYNAMIC // Compiling .dll
 #			if EXPORT_ID == PROJECT_ID
@@ -12,7 +12,7 @@
 #				define EXAMPLEAPI __declspec(dllimport)
 #			endif
 #		else // Compiling .exe
-#			define EXAMPLEAPI __declspec(dllimport)
+#			define EXAMPLEAPI
 #		endif
 #	endif
 #endif

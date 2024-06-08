@@ -2,53 +2,21 @@
 #  Release        : w/o debug symbols, w/  optimization
 #  RelWithDebInfo : w/  debug symbols, w/  optimization
 #  MinSizeRel     : w/o debug symbols, w/  optimization, stripped binaries
-
-if(WIN32)
-	set(githint "$ENV{APPDATA}/../Local/Github/PortableGit*/bin")
-	file( TO_CMAKE_PATH ${githint} githint )
-	file(GLOB GitPath "${githint}/git.exe")
-	set(Terminal $ENV{ComSpec})
-endif()
 # ------------------------------------------------------------------#--|
 # 							!!DANGERZONE!!							#  |
 # ------------------------------------------------------------------#  |
-cmake_minimum_required( VERSION 3.0 )								#  |
-SET( CMakeScriptRepo "https://github.com/piaoasd123/Purify.git" )	#  |
-# Grab CMake Script													#  |
-																	#  |
-message(STATUS "Git Executable: ${GIT_EXECUTABLE}")					#  |
-message(STATUS "CMake Script: ${CMakeScriptRepo}")					#  |
-if(EXISTS ${CMAKE_SOURCE_DIR}/Purify/)								#  |
-	execute_process(COMMAND ${Terminal}								#  |
-		"/c" ${GitPath} "pull" ${CMakeScriptRepo}					#  |
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Purify/")			#  |
-else()																#  |
-	execute_process(COMMAND ${Terminal}								#  |
-		"/c" ${GitPath} "clone" ${CMakeScriptRepo}					#  |
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")					#  |
-endif()																#  |
-# Set module path													#  |
-if(EXISTS "${CMAKE_SOURCE_DIR}/../Purify")							#  |
-	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../Purify")			#  |
-else()																#  |
-	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Purify")				#  |
-endif()																#  |
-message(STATUS "CMake Path: ${CMAKE_MODULE_PATH}")					#  |
-																	#  |
-# Include all modules												#  |
-include( CustomModules )											#  |
-																	#  |
-# ------------------------------------------------------------------#  |
-# 						  END OF DANGERZONE							#  |
-# ------------------------------------------------------------------#--|
-
+cmake_minimum_required( VERSION 3.0 )
+# Set module path
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../Purify")
+# Include purify build scripts
+include( Purify )
 # ------------------------------------------------------------------#--|
 # 							USER SETTINGS							#  |
 # ------------------------------------------------------------------#--|
-# Add global compile flags and preprocessor definitions
+# Add global compile/link flags and preprocessor definitions
 SET( GLOBAL_DEFINE
-"-D_CRT_SECURE_NO_WARNINGS"
-"/FC"
+_CRT_SECURE_NO_WARNINGS
+/FC #Full Path of Source Code File in Diagnostics
 )
 
 # Enable Unicode
@@ -57,5 +25,5 @@ SET( GLOBAL_DEFINE
 # ------------------------------------------------------------------#--|
 # 						END OF USER SETTINGS						#  |
 # ------------------------------------------------------------------#--|
-include( CreateBuild )												
+create_build( GLOBAL_DEFINE )
 #EOF
