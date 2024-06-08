@@ -17,11 +17,11 @@ if exist "%Git%" ( goto GitFound )
 
 rem ## Find Git for windows
 if exist "%PROGRAMFILES%\Git\bin\git.exe" (
-	set Git="%PROGRAMFILES%\Git\bin\git.exe"
+	set Git=%PROGRAMFILES%\Git\bin\git.exe
 	goto GitFound
 )
 if exist "%PROGRAMFILES(x86)%\Git\bin\git.exe" (
-	set Git="%PROGRAMFILES(x86)%\Git\bin\git.exe"
+	set Git=%PROGRAMFILES(x86)%\Git\bin\git.exe
 	goto GitFound
 )
 
