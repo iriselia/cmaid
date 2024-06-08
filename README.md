@@ -66,7 +66,7 @@ set_target_properties(bar PROPERTIES FOLDER "bar")
 message("My project name is: bar")
 ```
 
-__Purify:__
+__With Purify:__
  
 Top-level: `cmake_example/CMakeLists.txt`:
 ```CMake
