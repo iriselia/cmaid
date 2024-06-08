@@ -1,4 +1,4 @@
-Purify - Sample Project - WIN32 MSVC
+Purify Sample Project - Visual Studio
 =====
 
 This example program demonstrates the robust features provided by Purify.
