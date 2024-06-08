@@ -1,0 +1,9 @@
+SET( DEFINE
+TUTORIAL_02_STATIC
+)
+SET( INCLUDE
+)
+SET( LINK
+)
+
+create_project(STATIC "${DEFINE}" "${INCLUDE}" "${LINK}")
