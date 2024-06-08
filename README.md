@@ -80,7 +80,7 @@ __With Purify:__
 Top-level: `cmake_example/CMakeLists.txt`:
 ```CMake
 cmake_minimum_required( VERSION 3.0 )
-include( "${CMAKE_SOURCE_DIR}/Purify/Main.cmake" )
+include( "${CMAKE_SOURCE_DIR}/Purify/Loader.cmake" )
 
 SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
 
