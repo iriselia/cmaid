@@ -1,19 +1,21 @@
-@echo off
 rem ## back up CWD
-pushd "%~dp0/../"
+pushd "%~dp0"
+cd "%~dp0"
 
-del *.sln >nul 2>&1
-del *.lnk >nul 2>&1
+del *.sln
+del *.lnk
+
 for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
-rem @rmdir /s /q CMake
-@rmdir /s /q Build >nul 2>&1
-cd Binaries/
-del *.exe >nul 2>&1
-del *.dll >nul 2>&1
-@rmdir /s /q Backup >nul 2>&1
-@rmdir /s /q Libraries >nul 2>&1
-@rmdir /s /q Shaders >nul 2>&1
-cd ../
-@rmdir /q Binaries >nul 2>&1
+#@rmdir /s /q CMake
+#@rmdir /s /q Purify
+@rmdir /s /q Build
 
-popd
+cd Binaries/
+del *.exe
+del *.dll
+@rmdir /s /q Backup
+@rmdir /s /q Libraries
+@rmdir /s /q Shaders
+cd ../
+
+@rmdir /q Binaries
