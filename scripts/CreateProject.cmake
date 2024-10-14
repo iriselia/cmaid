@@ -198,7 +198,7 @@ MACRO(cmaid_project)
 		GeneratePrecompiledHeader()
 
 		# Force C++ if there's any cpp file
-		if(PROJECT_CPP_SOURCE)
+		if(PROJECT_SOURCE_CPP)
 			set_source_files_properties(${PROJECT_SOURCE} PROPERTIES LANGUAGE CXX)
 		else()
 			set_source_files_properties(${PROJECT_SOURCE} PROPERTIES LANGUAGE C)
@@ -211,7 +211,7 @@ MACRO(cmaid_project)
 			endif()
 		endif()	
 
-		list(APPEND PROJECT_SOURCE ${PROJECT_ASM_SOURCE})
+		list(APPEND PROJECT_SOURCE ${PROJECT_SOURCE_ASM})
 		
 		#----- compile flags -----
 		#[[
