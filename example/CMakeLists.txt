@@ -2,7 +2,7 @@
 #  Release        : w/o debug symbols, w/  optimization
 #  RelWithDebInfo : w/  debug symbols, w/  optimization
 #  MinSizeRel     : w/o debug symbols, w/  optimization, stripped binaries
-cmake_minimum_required( VERSION 3.0 )
+cmake_minimum_required( VERSION 3.10 )
 include( "${CMAKE_SOURCE_DIR}/cmaid/loader.cmake" )
 project( DIRECTORY_NAME )
 

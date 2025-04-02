@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.10 )
 
 MACRO(force_include_protected compileFlags includeProjs outString)
 	string(CONCAT ${outString} ${${outString}} "\n/* Protected Headers */\n")

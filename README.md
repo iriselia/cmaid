@@ -33,7 +33,7 @@ __Traditional CMake:__
  
 Top-level: `cmake_example/CMakeLists.txt`:
 ```CMake
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required( VERSION 3.10 )
 project (cmake_example)
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS -DDemo_Macro)
@@ -81,7 +81,7 @@ __With Purify:__
  
 Top-level: `cmake_example/CMakeLists.txt`:
 ```CMake
-cmake_minimum_required( VERSION 3.0 )
+cmake_minimum_required( VERSION 3.10 )
 include( "${CMAKE_SOURCE_DIR}/Purify/Loader.cmake" )
 
 SET( GLOBAL_DEFINITIONS _CRT_SECURE_NO_WARNINGS Demo_Macro)
